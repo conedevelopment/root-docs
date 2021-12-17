@@ -31,19 +31,78 @@ class Post extends Model implements Resourcable
 }
 ```
 
-## Writing Resources
+### Registering Resources
 
-### Inline Resources
-
-Inline resources are useful when you don't want to make a custom resource class, or when you just want to override something in the "parent" resource.
+You may register your resources using the model that it corresponds to. Typcally you may use a service provider for that:
 
 ```php
-class Post extends Model implements Resourcable
-{
-    use InteractsWithResource {
-        InteractsWithResource::toResource as toDefaultResource;
-    }
+namespace App\Providers;
 
+use App\Models\Post;
+use Cone\Root\Root;
+use Illuminate\Support\ServiceProvider;
+
+class ResourceServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot(): void
+    {
+        Root::running(static function (): void {
+            Post::registerResource();
+        });
+    }
+}
+```
+
+## Writing Resources
+
+You may create a Resource class using the `root:resource` artisan command. It requires only a name as its parameter and generates the resource class for the model:
+
+```sh
+php artisan make:resource PostResource
+
+# or
+
+php artisan make:resource CustomPostResource --model=Post
+```
+
+### Fields
+
+> For the detailed documentation visit the [fields](#) section.
+
+Fields are handlers for the model attributes. They are responsible to save/update and display the given attribute of the resource model. You can easily define fields on your resource by using the `fields` method:
+
+```php
+class PostResource extends Resource
+{
+    /**
+     * Define the fields for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function fields(Request $request): array
+    {
+        return [
+            ID::make(),
+            Text::make('Title'),
+        ];
+    }
+}
+```
+
+Alternatively, you can use `withFields` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
+
+```php
+use Cone\Root\Support\Collections\Fields;
+use Illuminate\Http\Request;
+
+class Post extends BasePost
+{
     /**
      * Get the resource representation of the model.
      *
@@ -51,21 +110,19 @@ class Post extends Model implements Resourcable
      */
     public static function toResource(): Resource
     {
-        return static::toDefaultResource()
-                    ->withFields([
-                        ID::make(),
-                    ])
-                    ->authorize(static function (Request $request): bool {
-                        return $request->user()->can('create', static::class);
-                    });
+        return parent::toResource()
+            ->withFields(static function (Request $request, Fields $fields): Fields {
+                return $fields->merge([
+                    Textarea::make('Exceprt'),
+                ]);
+            });
     }
 }
 ```
 
-#### Fields
-#### Filters
-#### Actions
-#### Widgets
-#### Extracts
+> You can also pass an `array` instead of a `Closure`.
 
-### Resource Classes
+### Filters
+### Actions
+### Widgets
+### Extracts
