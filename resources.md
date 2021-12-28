@@ -63,18 +63,18 @@ class ResourceServiceProvider extends ServiceProvider
 You may create a Resource class using the `root:resource` artisan command. It requires only a name as its parameter and generates the resource class for the model:
 
 ```sh
-php artisan make:resource PostResource
+php artisan root:resource PostResource
 
 # or
 
-php artisan make:resource CustomPostResource --model=Post
+php artisan root:resource CustomPostResource --model=Post
 ```
 
 ### Fields
 
 > For the detailed documentation visit the [fields](#) section.
 
-Fields are handlers for the model attributes. They are responsible to save/update and display the given attribute of the resource model. You can easily define fields on your resource by using the `fields` method:
+Fields are handlers for the model attributes. They are responsible for saving and displaying the given attribute of the resource model. You can easily define fields on your resource by using the `fields` method:
 
 ```php
 class PostResource extends Resource
@@ -120,9 +120,22 @@ class Post extends BasePost
 }
 ```
 
-> You can also pass an `array` instead of a `Closure`.
+> You can also pass an `array` instead of a `Closure`. In that case the array will be merged to the collection.
 
 ### Filters
+
+> For the detailed documentation visit the [filters](#) section.
+
+Filters are used on resource indexes and extract views. They are responsible for transforming the current request to a database query. You can easily define filters on your resource by using the `filters` method:
+
 ### Actions
+
+> For the detailed documentation visit the [actions](#) section.
+
 ### Widgets
+
+> For the detailed documentation visit the [widgets](#) section.
+
 ### Extracts
+
+> For the detailed documentation visit the [extracts](#) section.
