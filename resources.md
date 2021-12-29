@@ -113,7 +113,7 @@ class Post extends BasePost
         return parent::toResource()
             ->withFields(static function (Request $request, Fields $fields): Fields {
                 return $fields->merge([
-                    Textarea::make('Exceprt'),
+                    Textarea::make('Excerpt'),
                 ]);
             });
     }
