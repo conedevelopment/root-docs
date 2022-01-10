@@ -77,6 +77,11 @@ php artisan root:resource CustomPostResource --model=Post
 Fields are handlers for the model attributes. They are responsible for saving and displaying the given attribute of the resource model. You can easily define fields on your resource by using the `fields` method:
 
 ```php
+use Cone\Root\Fields\ID;
+use Cone\Root\Fields\Text;
+use Cone\Root\Resources\Resource;
+use Illuminate\Http\Request;
+
 class PostResource extends Resource
 {
     /**
@@ -98,6 +103,8 @@ class PostResource extends Resource
 Alternatively, you can use `withFields` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
 
 ```php
+use Cone\Root\Fields\Textarea;
+use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Http\Request;
 
@@ -120,13 +127,64 @@ class Post extends BasePost
 }
 ```
 
-> You can also pass an `array` instead of a `Closure`. In that case the array will be merged to the collection.
+> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
 
 ### Filters
 
 > For the detailed documentation visit the [filters](#) section.
 
 Filters are used on resource indexes and extract views. They are responsible for transforming the current request to a database query. You can easily define filters on your resource by using the `filters` method:
+
+```php
+use Cone\Root\Filters\Category;
+use Cone\Root\Resources\Resource;
+use Illuminate\Http\Request;
+
+class PostResource extends Resource
+{
+    /**
+     * Define the filters for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function filters(Request $request): array
+    {
+        return [
+            Category::make(),
+        ];
+    }
+}
+```
+
+Alternatively, you can use `withFilters` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
+
+```php
+use Cone\Root\Filters\Author;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Collections\Filters;
+use Illuminate\Http\Request;
+
+class Post extends BasePost
+{
+    /**
+     * Get the resource representation of the model.
+     *
+     * @return \Cone\Root\Resources\Resource
+     */
+    public static function toResource(): Resource
+    {
+        return parent::toResource()
+            ->withFilters(static function (Request $request, Filters $filters): Filters {
+                return $filters->merge([
+                    Author::make(),
+                ]);
+            });
+    }
+}
+```
+
+> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
 
 ### Actions
 
