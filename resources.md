@@ -133,7 +133,7 @@ class Post extends BasePost
 
 > For the detailed documentation visit the [filters](#) section.
 
-Filters are used on resource indexes and extract views. They are responsible for transforming the current request to a database query. You can easily define filters on your resource by using the `filters` method:
+Filters are responsible for transforming the current request to a database query. You can easily define filters on your resource by using the `filters` method:
 
 ```php
 use Cone\Root\Filters\Category;
@@ -189,6 +189,59 @@ class Post extends BasePost
 ### Actions
 
 > For the detailed documentation visit the [actions](#) section.
+
+Actions are responsible for performing a specific action on a set of models. You can easily define actions on your resource by using the `actions` method:
+
+```php
+use Cone\Root\Actions\Publish;
+use Cone\Root\Resources\Resource;
+use Illuminate\Http\Request;
+
+class PostResource extends Resource
+{
+    /**
+     * Define the actions for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function actions(Request $request): array
+    {
+        return [
+            Publish::make(),
+        ];
+    }
+}
+```
+
+Alternatively, you can use `withActions` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
+
+```php
+use Cone\Root\Actions\Delete;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Collections\Actions;
+use Illuminate\Http\Request;
+
+class Post extends BasePost
+{
+    /**
+     * Get the resource representation of the model.
+     *
+     * @return \Cone\Root\Resources\Resource
+     */
+    public static function toResource(): Resource
+    {
+        return parent::toResource()
+            ->withActions(static function (Request $request, Actions $actions): Actions {
+                return $actions->merge([
+                    Delete::make(),
+                ]);
+            });
+    }
+}
+```
+
+> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
 
 ### Widgets
 
