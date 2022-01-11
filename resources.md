@@ -103,7 +103,7 @@ class PostResource extends Resource
 Alternatively, you can use `withFields` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
 
 ```php
-use Cone\Root\Fields\Textarea;
+use Cone\Root\Fields\Text;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Fields;
 use Illuminate\Http\Request;
@@ -120,7 +120,7 @@ class Post extends BasePost
         return parent::toResource()
             ->withFields(static function (Request $request, Fields $fields): Fields {
                 return $fields->merge([
-                    Textarea::make('Excerpt'),
+                    Text::make('Title'),
                 ]);
             });
     }
@@ -136,7 +136,7 @@ class Post extends BasePost
 Filters are responsible for transforming the current request to a database query. You can easily define filters on your resource by using the `filters` method:
 
 ```php
-use Cone\Root\Filters\Category;
+use App\Root\Filters\Category;
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 
@@ -160,7 +160,7 @@ class PostResource extends Resource
 Alternatively, you can use `withFilters` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
 
 ```php
-use Cone\Root\Filters\Author;
+use App\Root\Filters\Category;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Http\Request;
@@ -177,7 +177,7 @@ class Post extends BasePost
         return parent::toResource()
             ->withFilters(static function (Request $request, Filters $filters): Filters {
                 return $filters->merge([
-                    Author::make(),
+                    Category::make(),
                 ]);
             });
     }
@@ -193,7 +193,7 @@ class Post extends BasePost
 Actions are responsible for performing a specific action on a set of models. You can easily define actions on your resource by using the `actions` method:
 
 ```php
-use Cone\Root\Actions\Publish;
+use App\Root\Actions\Publish;
 use Cone\Root\Resources\Resource;
 use Illuminate\Http\Request;
 
@@ -217,7 +217,7 @@ class PostResource extends Resource
 Alternatively, you can use `withActions` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
 
 ```php
-use Cone\Root\Actions\Delete;
+use App\Root\Actions\Publish;
 use Cone\Root\Resources\Resource;
 use Cone\Root\Support\Collections\Actions;
 use Illuminate\Http\Request;
@@ -234,7 +234,7 @@ class Post extends BasePost
         return parent::toResource()
             ->withActions(static function (Request $request, Actions $actions): Actions {
                 return $actions->merge([
-                    Delete::make(),
+                    Publish::make(),
                 ]);
             });
     }
@@ -247,6 +247,110 @@ class Post extends BasePost
 
 > For the detailed documentation visit the [widgets](#) section.
 
+Widgets are cards that display some information or any content you want to display. You can easily define widgets on your resource by using the `widgets` method:
+
+```php
+use App\Root\Widgets\TotalPosts;
+use Cone\Root\Resources\Resource;
+use Illuminate\Http\Request;
+
+class PostResource extends Resource
+{
+    /**
+     * Define the widgets for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function widgets(Request $request): array
+    {
+        return [
+            TotalPosts::make(),
+        ];
+    }
+}
+```
+
+Alternatively, you can use `withWidgets` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
+
+```php
+use App\Root\Widgets\TotalPosts;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Collections\Widgets;
+use Illuminate\Http\Request;
+
+class Post extends BasePost
+{
+    /**
+     * Get the resource representation of the model.
+     *
+     * @return \Cone\Root\Resources\Resource
+     */
+    public static function toResource(): Resource
+    {
+        return parent::toResource()
+            ->withWidgets(static function (Request $request, Widgets $widgets): Widgets {
+                return $widgets->merge([
+                    TotalPosts::make(),
+                ]);
+            });
+    }
+}
+```
+
+> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
+
 ### Extracts
 
 > For the detailed documentation visit the [extracts](#) section.
+
+Extracts are layers on the top of the resource index. They are responsible to perform more complex queries and display relevant information for the query, that you may not want to show on the index page. You can easily define extracts on your resource by using the `extracts` method:
+
+```php
+use App\Root\Extracts\PostLengths;
+use Cone\Root\Resources\Resource;
+use Illuminate\Http\Request;
+
+class PostResource extends Resource
+{
+    /**
+     * Define the extracts for the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function extracts(Request $request): array
+    {
+        return [
+            PostLengths::make(),
+        ];
+    }
+}
+```
+
+Alternatively, you can use `withExtracts` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
+
+```php
+use App\Root\Extracts\PostLengths;
+use Cone\Root\Resources\Resource;
+use Cone\Root\Support\Collections\Extracts;
+use Illuminate\Http\Request;
+
+class Post extends BasePost
+{
+    /**
+     * Get the resource representation of the model.
+     *
+     * @return \Cone\Root\Resources\Resource
+     */
+    public static function toResource(): Resource
+    {
+        return parent::toResource()
+            ->withExtracts(static function (Request $request, Extracts $extracts): Extracts {
+                return $extracts->merge([
+                    PostLengths::make(),
+                ]);
+            });
+    }
+}
+```
