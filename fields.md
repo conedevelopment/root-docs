@@ -43,19 +43,28 @@ Number::make('Price')
 You may define custom value hydration logic on your field clasas. To do so, you can easily override the default `hydrate` method:
 
 ```php
-/**
- * Hydrate the model.
- *
- * @param  \Illuminate\Http\Request  $request
- * @param  \Illuminate\Database\Eloquent\Model  $model
- * @param  mixed  $value
- * @return void
- */
-public function hydrate(Request $request, Model $model, mixed $value): void
+namespace App\Root\Fields;
+
+use Cone\Root\Fields\Field;
+use Illuminate\Databsase\Eloquent\Model;
+use Illuminate\Http\Request;
+
+class CustomField extends Field
 {
-    $model->saving(function (Model $model) use ($value): void {
-        $model->setAttribute($this->name, $value);
-    });
+    /**
+     * Hydrate the model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  mixed  $value
+     * @return void
+     */
+    public function hydrate(Request $request, Model $model, mixed $value): void
+    {
+        $model->saving(function (Model $model) use ($value): void {
+            $model->setAttribute($this->name, $value);
+        });
+    }
 }
 ```
 
@@ -64,20 +73,36 @@ public function hydrate(Request $request, Model $model, mixed $value): void
 You may show or hide fields based on the current resource view. For example, some fields might be visible on the index page, while others should be hidden. You can easily customize the field visibility logic using the `visible` method:
 
 ```php
-use Cone\Root\Fields\Textarea;
 use Illuminate\Http\Request;
 
-Textarea::make('Intro')
-    ->visibleOn(static function (Request $request) {
-        return $request->user()->isAdmin();
-    });
+$field->visibleOn(static function (Request $request): bool {
+    return $request->user()->isAdmin();
+});
+
+$field->hiddenOn(static function (Request $request): bool {
+    return ! $request->user()->isAdmin();
+});
 ```
 
 Also, you can use the built-in methods as well. They are enough in most of the cases:
 
 ```php
+$field->visibleOnIndex();
+$field->visibleOnCreate();
+$field->visibleOnShow();
+$field->visibleOnUpdate();
+$field->visibleOnDisplay();
+$field->visibleOnForm();
 
+$field->hiddenOnIndex();
+$field->hiddenOnCreate();
+$field->hiddenOnShow();
+$field->hiddenOnUpdate();
+$field->hiddenOnDisplay();
+$field->hiddenOnForm();
 ```
+
+> You can also pass a `Closure` to any of the listed methods.
 
 ## Authorization
 
