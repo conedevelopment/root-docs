@@ -24,9 +24,60 @@ Text::make('Title')
 > Alternatively, you may do default value definitions on your model directly.
 
 ### Formatting Value
+
+You may define custom value formatters for the field values. In that case you can easily define a format resolver with the `format` method:
+
+```php
+use Cone\Root\Fields\Number;
+use Illuminate\Databsase\Eloquent\Model;
+use Illuminate\Http\Request;
+
+Number::make('Price')
+    ->format(static function (Request $request, Model $model, mixed $value) {
+        return sprintf('%d USD', $value);
+    });
+```
+
 ### Value Hydration
 
+You may define custom value hydration logic on your field clasas. To do so, you can easily override the default `hydrate` method:
+
+```php
+/**
+ * Hydrate the model.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  \Illuminate\Database\Eloquent\Model  $model
+ * @param  mixed  $value
+ * @return void
+ */
+public function hydrate(Request $request, Model $model, mixed $value): void
+{
+    $model->saving(function (Model $model) use ($value): void {
+        $model->setAttribute($this->name, $value);
+    });
+}
+```
+
 ## Visibility
+
+You may show or hide fields based on the current resource view. For example, some fields might be visible on the index page, while others should be hidden. You can easily customize the field visibility logic using the `visible` method:
+
+```php
+use Cone\Root\Fields\Textarea;
+use Illuminate\Http\Request;
+
+Textarea::make('Intro')
+    ->visibleOn(static function (Request $request) {
+        return $request->user()->isAdmin();
+    });
+```
+
+Also, you can use the built-in methods as well. They are enough in most of the cases:
+
+```php
+
+```
 
 ## Authorization
 
