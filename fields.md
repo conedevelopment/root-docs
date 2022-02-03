@@ -153,13 +153,63 @@ $field->authorize(static function (Request $request, ?Model $model = null, ?Mode
 You may define validation rules for your field instances. To do so, you can call the `rules`, `createRules` and `updateRules` on the field instance:
 
 ```php
-$field->rules([
-    'name' => ['string', 'required'],
-]);
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+$field->rules(['string', 'required'])
+    ->createRules(['unique:posts'])
+    ->updateRules(static function (Request $request, Model $model): array {
+        return [Rule::unique('posts')->ignoreModel($model)];
+    });
 ```
+
+> You can pass an `array` or a `Closure` to the rule methods.
+
+The value passed to the `rules` method will be present for both creating and updating models.
 
 ## Searchable and Sortable Fields
 
+On index or extract views you may want to filter the results by sorting or searching any desired fields. To do so you can call the `sortable` and the `searchable` methods on your field instance:
+
+```php
+$field->sortable();
+$field->sortable(false);
+
+$field->searchable();
+$field->searchable(false);
+```
+
 ## Available Fields
 
+### Text
+### Textarea
+### Number
+### Select
+### Checkbox
+### Radio
+### Boolean
+### Range
+### Color
+### Date
+### Editor
+### Media
+### File
+### BelongsTo
+### BelongsToMany
+### HasOne
+### HasMany
+### MorphOne
+### MorphMany
+### MorphToMany
+
 ## Creating Fields
+
+In some cases, the default fields are not enough, or don't provide the flexibility you need. In that scenario you can create your own custom fields easily. To generate a field easily you can call the following artisan command:
+
+```sh
+php artisan root:field Autocomplete
+```
+
+### Custom Vue Component
+### Registering Custom Field Routes
