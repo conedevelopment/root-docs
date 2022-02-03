@@ -6,7 +6,7 @@ Fields are handlers for the model attributes. They are responsible for saving an
 
 Field values are extracted from the given model's attributes. The attribute that is matching with the name of the field will be injected into the field when displaying or converting it into a form input.
 
-### Defining Default Value
+### Default Value
 
 It may happen that the attribute does not exists on the model that matches with the field, or its value needs to be converted before using it from the field. In that case you may define a default value resolver on your field instance:
 
@@ -102,11 +102,61 @@ $field->hiddenOnDisplay();
 $field->hiddenOnForm();
 ```
 
-> You can also pass a `Closure` to any of the listed methods.
+You can also pass a `Closure` to any of the listed methods, to fully customize the visibility logic:
+
+```php
+$this->visible(static function (Request $request): bool {
+    return $request->user()->can('attachTag', Post::class);
+});
+
+$this->hidden(static function (Request $request): bool {
+    return $request->user()->cannot('attachTag', Post::class);
+});
+```
 
 ## Authorization
 
+You may allow/disallow interaction with fields. To do so, you can call the `authorize` method on the field instance:
+
+```php
+$field->authorize(static function (Request $request): bool {
+    return $request->user()->can('create', Post::class);
+});
+```
+
+Also, when authorizing fields, pivot fields or actions, you may have access to the models of the context:
+
+```php
+// Action or top level field
+$field->authorize(static function (Request $request, ?Model $model = null): bool {
+    if (is_null($model)) {
+        return $request->user()->can('create', Post::class);
+    }
+
+    return $request->user()->can('view', $model);
+});
+
+// Pivot field
+$field->authorize(static function (Request $request, ?Model $model = null, ?Model $related = null): bool {
+    if (is_null($model) || is_null($related)) {
+        return $request->user()->can('create', Tag::class);
+    }
+
+    return $request->user()->can('attachTag', $model, $related);
+});
+```
+
+> The `$model` and the `$related` parameters can be null, since they are only passed to the callback when they are available in the current authorization context.
+
 ## Validation
+
+You may define validation rules for your field instances. To do so, you can call the `rules`, `createRules` and `updateRules` on the field instance:
+
+```php
+$field->rules([
+    'name' => ['string', 'required'],
+]);
+```
 
 ## Searchable and Sortable Fields
 
