@@ -1,3 +1,9 @@
+---
+title: "What is Root?"
+github: "https://github.com/conedevelopment/root-docs/blob/master/core-concepts.md"
+order: 1
+---
+
 # What is Root?
 
 Root is an admin package for Laravel applications. It offers a simple model management with a robust resource API and a modern and fast UI.

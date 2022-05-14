@@ -1,3 +1,9 @@
+---
+title: "Fields"
+github: "https://github.com/conedevelopment/root-docs/blob/master/fields.md"
+order: 5
+---
+
 # Fields
 
 Fields are handlers for the model attributes. They are responsible for saving and displaying the given attribute of the resource model.
