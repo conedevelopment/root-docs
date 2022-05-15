@@ -4,7 +4,7 @@ github: "https://github.com/conedevelopment/root-docs/blob/master/resources.md"
 order: 3
 ---
 
-Resources are basically extra layers around models. Using resources it's easy to build up a CRUD workflow for a model, using [fields](#), [filters](#), [actions](#), [extracts](#) or [widgets](#).
+Resources are basically extra layers around models. Using resources it's easy to build up a CRUD workflow for a model, using [fields](/docs/fields), [filters](/docs/filters), [actions](/docs/actions), [extracts](/docs/extracts) or [widgets](/docs/widgets).
 
 ## Resource Models
 
@@ -37,27 +37,29 @@ class Post extends Model implements Resourcable
 
 ### Registering Resources
 
-You may register your resources using the model that it corresponds to. Typcally you may use a service provider for that:
+You may register your resources by using the `RootServiceProvider` which is published and automatically registered when the `root:install` artisan command is called.
 
 ```php
 namespace App\Providers;
 
+use App\Models\User;
 use App\Models\Post;
 use Cone\Root\Root;
-use Illuminate\Support\ServiceProvider;
+use Cone\Root\RootApplicationServiceProvider;
 
-class ResourceServiceProvider extends ServiceProvider
+class RootServiceProvider extends RootApplicationServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * The resources.
      *
-     * @return void
+     * @return array
      */
-    public function boot(): void
+    protected function resources(): array
     {
-        Root::running(static function (): void {
-            Post::registerResource();
-        });
+        return [
+            User::toResource(),
+            Post::toResource(),
+        ];
     }
 }
 ```
@@ -76,7 +78,7 @@ php artisan root:resource CustomPostResource --model=Post
 
 ### Fields
 
-> For the detailed documentation visit the [fields](#) section.
+> For the detailed documentation visit the [fields](/docs/fields) section.
 
 Fields are handlers for the model attributes. They are responsible for saving and displaying the given attribute of the resource model. You can easily define fields on your resource by using the `fields` method:
 
@@ -192,7 +194,7 @@ class Post extends BasePost
 
 ### Actions
 
-> For the detailed documentation visit the [actions](#) section.
+> For the detailed documentation visit the [actions](/docs/actions) section.
 
 Actions are responsible for performing a specific action on a set of models. You can easily define actions on your resource by using the `actions` method:
 
@@ -211,41 +213,12 @@ class PostResource extends Resource
      */
     public function actions(Request $request): array
     {
-        return [
+        return array_merge(parent::actions($request), [
             Publish::make(),
-        ];
+        ]);
     }
 }
 ```
-
-Alternatively, you can use `withActions` method on an initialized resoure instance. It can be useful when you just want to hook into the resource instance for some reason. Typically you may do that in your model's `toResource` method:
-
-```php
-use App\Root\Actions\Publish;
-use Cone\Root\Resources\Resource;
-use Cone\Root\Support\Collections\Actions;
-use Illuminate\Http\Request;
-
-class Post extends BasePost
-{
-    /**
-     * Get the resource representation of the model.
-     *
-     * @return \Cone\Root\Resources\Resource
-     */
-    public static function toResource(): Resource
-    {
-        return parent::toResource()
-            ->withActions(static function (Request $request, Actions $actions): Actions {
-                return $actions->merge([
-                    Publish::make(),
-                ]);
-            });
-    }
-}
-```
-
-> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
 
 ### Widgets
 

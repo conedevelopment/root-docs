@@ -20,7 +20,7 @@ use Illuminate\Databsase\Eloquent\Model;
 use Illuminate\Http\Request;
 
 Text::make('Title')
-    ->default(static function (Request $request, Model $model, mixed $value) {
+    ->default(static function (Request $request, Model $model, mixed $value): string {
         return is_null($value) ? 'foo' : $value;
     });
 ```
@@ -37,7 +37,7 @@ use Illuminate\Databsase\Eloquent\Model;
 use Illuminate\Http\Request;
 
 Number::make('Price')
-    ->format(static function (Request $request, Model $model, mixed $value) {
+    ->format(static function (Request $request, Model $model, mixed $value): string {
         return sprintf('%d USD', $value);
     });
 ```
@@ -65,9 +65,7 @@ class CustomField extends Field
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
-        $model->saving(function (Model $model) use ($value): void {
-            $model->setAttribute($this->name, $value);
-        });
+        $model->setAttribute($this->name, $value);
     }
 }
 ```
@@ -187,6 +185,26 @@ $field->searchable(false);
 ## Available Fields
 
 ### Text
+
+The `Text` field is typically a handler for `string` model attributes:
+
+```php
+$field = Text::make(__('Title'), 'title');
+```
+
+You can also apply modifiers on a text field:
+
+```php
+// Add the "size" HTML input attribute
+$field->size(40);
+
+// Adds the "minlength" HTML input attribute
+$field->minlength(40);
+
+// Adds the "maxlength" HTML input attribute
+$field->maxlength(40);
+```
+
 ### Textarea
 ### Number
 ### Select
