@@ -22,9 +22,9 @@ use Cone\Root\Http\Requests\RootRequest;
  */
 public function actions(RootRequest $request): array
 {
-    return array_merge(parent::actions($request), [
+    return [
         Publish::make(),
-    ]);
+    ];
 }
 ```
 
