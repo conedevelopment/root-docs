@@ -6,6 +6,14 @@ order: 6
 
 Actions are runnable tasks on a given collection of models. Actions can be registered in resources and extracts. Also, actions are easily configurable and customizable for the current user.
 
+## Creating Actions
+
+You can generate new action classes by calling the `root:action` artisan command:
+
+```php
+php artisan root:action Publish
+```
+
 ## Registering Actions
 
 You can register actions in resources and extracts, by using the `actions` method.
