@@ -6,4 +6,4 @@ order: 2
 
 ## Widgets
 
-> For the detailed documentation visit the [widgets](#) section.
+> For the detailed documentation visit the [widgets](/docs/widgets) section.
