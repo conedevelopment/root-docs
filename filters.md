@@ -36,7 +36,7 @@ public function filters(RootRequest $request): array
 }
 ```
 
-Alternatively, you can use `withFilters` method on an object that resovles actions. It can be useful when you just want to hook into the object for some reason.
+Alternatively, you can use `withFilters` method on an object that resovles filters. It can be useful when you just want to hook into the object for some reason.
 
 ```php
 use App\Root\Filters\Category;
@@ -54,20 +54,18 @@ $resource->withFilters(static function (RootRequest $request, Filters $filters):
 
 ## Configuration
 
-### Select Filters
+### Options
 
-By default Root generates select filters, when calling the `root:filter` artisan command.
-
-Select filters have an `option` method, where you can define the selectable options:
+Filters have an `option` method, where you can define the selectable options:
 
 ```php
 namespace App\Root\Filters;
 
-use Cone\Root\Filters\SelectFilter;
+use Cone\Root\Filters\Filter;
 use Cone\Root\Http\Requests\RootRequest;
 use Illuminate\Database\Eloquent\Builder;
 
-class Category extends SelectFilter
+class Category extends Filter
 {
     /**
      * Apply the filter on the query.
@@ -104,18 +102,54 @@ Also, you may configure a select filter with multiple selectable choices. To do 
 Category::make()->multiple();
 ```
 
-### Input Filters
-
 ### Custom Components
+
+By default, filters use the `Select` form component, however you can use any component you want. You may also register your own custom component as well:
+
+```js
+document.addEventListener('root:booting', ({ detail }) => {
+    detail.app.component('CustomFilter', require('./Components/CustomFilter').defaul);
+});
+```
+
+```php
+use Cone\Root\Filters\Filter;
+
+class CustomFilter extends Filter
+{
+    /**
+     * The Vue component.
+     *
+     * @var string|null
+     */
+    protected ?string $component = 'CustomFilter';
+}
+```
 
 ### Functional Filters
 
-### Authorization
-
-You may allow or disallow interaction with actions. To do so, you can call the `authorize` method on the action instance:
+Also, in some cases you may interact with the Query Builder in a filter, but you don't want to render any component for it on the front-end. In that case, you may use functional components. For functional components the `$component` property is set to `null`:
 
 ```php
-$action->authorize(static function (RootRequest $request): bool {
-    return $request->user()->can('batchPublish', Post::class);
+use Cone\Root\Filters\Filter;
+
+class FunctionalFilter extends Filter
+{
+    /**
+     * The Vue component.
+     *
+     * @var string|null
+     */
+    protected ?string $component = null;
+}
+```
+
+### Authorization
+
+You may allow or disallow interaction with filters. To do so, you can call the `authorize` method on the action instance:
+
+```php
+$filter->authorize(static function (RootRequest $request): bool {
+    return $request->user()->isAdmin();
 });
 ```
