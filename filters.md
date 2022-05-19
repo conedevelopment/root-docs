@@ -146,7 +146,7 @@ class FunctionalFilter extends Filter
 
 ### Authorization
 
-You may allow or disallow interaction with filters. To do so, you can call the `authorize` method on the action instance:
+You may allow or disallow interaction with filters. To do so, you can call the `authorize` method on the filter instance:
 
 ```php
 $filter->authorize(static function (RootRequest $request): bool {

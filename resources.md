@@ -6,6 +6,18 @@ order: 3
 
 Resources are basically extra layers around models. Using resources it's easy to build up a CRUD workflow for a model, using [fields](/docs/fields), [filters](/docs/filters), [actions](/docs/actions), [extracts](/docs/extracts) or [widgets](/docs/widgets).
 
+## Creating Resources
+
+You may create a Resource class using the `root:resource` artisan command. It requires only a name as its parameter and generates the resource class for the model:
+
+```sh
+php artisan root:resource PostResource
+
+# or
+
+php artisan root:resource CustomPostResource --model=Post
+```
+
 ## Resource Models
 
 You can easily make a model "resourceable" by implementing the `Cone\Root\Interfaces\Resourceable` interface on the model class.
@@ -15,8 +27,8 @@ namespace App\Models;
 
 use App\Root\Resources\PostResource;
 use Cone\Root\Interfaces\Resourceable;
-use Cone\Root\Traits\InteractsWithResource;
 use Cone\Root\Resources\Resource;
+use Cone\Root\Traits\InteractsWithResource;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model implements Resourcable
@@ -35,7 +47,7 @@ class Post extends Model implements Resourcable
 }
 ```
 
-### Registering Resources
+## Registering Resources
 
 You may register your resources by using the `RootServiceProvider` which is published and automatically registered when the `root:install` artisan command is called.
 
@@ -63,16 +75,14 @@ class RootServiceProvider extends RootApplicationServiceProvider
 }
 ```
 
-## Writing Resources
+## Configuration
 
-You may create a Resource class using the `root:resource` artisan command. It requires only a name as its parameter and generates the resource class for the model:
+You may allow or disallow interaction with resources. To do so, you can call the `authorize` method on the resource instance:
 
-```sh
-php artisan root:resource PostResource
-
-# or
-
-php artisan root:resource CustomPostResource --model=Post
+```php
+$resource->authorize(static function (RootRequest $request): bool {
+    return $request->user()->isAdmin();
+});
 ```
 
 ### Fields
@@ -97,10 +107,10 @@ class PostResource extends Resource
      */
     public function fields(RootRequest $request): array
     {
-        return [
+        return array_merge(parent::fields($request), [
             ID::make(),
             Text::make('Title'),
-        ];
+        ]);
     }
 }
 ```
@@ -126,12 +136,14 @@ class PostResource extends Resource
      */
     public function filters(RootRequest $request): array
     {
-        return [
+        return array_merge(parent::filters($request), [
             Category::make(),
-        ];
+        ]);
     }
 }
 ```
+
+> Note, by default there are two registered filters `Sort` and `Search`. If you don't want to register them by default, just define an array without the `array_merge()` function.
 
 ### Actions
 
@@ -182,9 +194,9 @@ class PostResource extends Resource
      */
     public function widgets(RootRequest $request): array
     {
-        return [
+        return array_merge(parent::widgets($request), [
             TotalPosts::make(),
-        ];
+        ]);
     }
 }
 ```
@@ -210,9 +222,9 @@ class PostResource extends Resource
      */
     public function extracts(Request $request): array
     {
-        return [
+        return array_merge(parent::extracts($request), [
             PostLengths::make(),
-        ];
+        ]);
     }
 }
 ```
