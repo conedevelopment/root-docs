@@ -10,6 +10,10 @@ Root is an admin package for Laravel applications. It offers a simple model mana
 
 ## Scope and Scale
 
+Root is a quite simple, drop-in admin package. It means, it requires less configuration when installing, so probably it's easier to migrate between versions, or migrate between projects.
+
+However, it comes with a price: Root is scoped to small, medium-sized projects: e-commerce or generic CMS projects.
+
 ## Comparing to other packages/solutions
 
 Root is heavily inspired by [Symfony EasyAdmin](https://symfony.com/bundles/EasyAdminBundle/current/index.html) and [Lavel Nova](https://nova.laravel.com/).

@@ -54,6 +54,59 @@ $resource->withActions(static function (RootRequest $request, Actions $actions):
 
 ## Configuration
 
+### Customizing the Query
+
+You may customize the query of the action you are working with. While its base query is provided by its parent resource or extract, it's very possible you want to perform a completely different custom database query.
+
+```php
+use Cone\Root\Actions\Action;
+use Cone\Root\Http\Requests\RootRequest;
+
+class Publish extends Action
+{
+    /**
+     * Resolve the query for the action.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function resolveQuery(RootRequest $request): Builder
+    {
+        return parent::resolveQuery($request)->whereNull('published_at');
+    }
+}
+```
+
+### Fields
+
+> For the detailed documentation visit the [fields](/docs/fields) section.
+
+You may define fields for any action:
+
+```php
+use Cone\Root\Actions\Action;
+use Cone\Root\Fields\Date;
+use Cone\Root\Http\Requests\RootRequest;
+
+class Publish extends Action
+{
+    /**
+     * Define the fields for the action.
+     *
+     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @return array
+     */
+    public function fields(RootRequest $request): array
+    {
+        return array_merge(parent::fields($request), [
+            Date::make('Published at')->withTime(),
+        ]);
+    }
+}
+```
+
+> When running the action, the submitted form data will be accessible in the `Request` object passed to the action's `handle` method.
+
 ### Authorization
 
 You may allow or disallow interaction with actions. To do so, you can call the `authorize` method on the action instance:
@@ -69,61 +122,26 @@ $action->authorize(static function (RootRequest $request): bool {
 You may show or hide actions based on the current resource view. For example, some actions might be visible on the index page, while others should be hidden. You can easily customize the action visibility logic using the `visibleOn` and `hiddenOn` methods:
 
 ```php
-use Cone\Root\Http\Requests\RootRequest;
-
-$field->visibleOn(static function (RootRequest $request): bool {
-    return $request->user()->isAdmin();
+$action->visibleOn(static function (RootRequest $request): bool {
+    return $request->user()->can('batchPublish', Post::class);
 });
 
-$field->hiddenOn(static function (RootRequest $request): bool {
-    return ! $request->user()->isAdmin();
+$action->hiddenOn(static function (RootRequest $request): bool {
+    return $request->user()->cannot('batchPublish', Post::class);
 });
 ```
 
 Also, you can use the built-in methods as well:
 
 ```php
-$field->visibleOnIndex();
-$field->visibleOnShow();
+$action->visibleOnIndex();
+$action->visibleOnShow();
 
-$field->hiddenOnIndex();
-$field->hiddenOnShow();
+$action->hiddenOnIndex();
+$action->hiddenOnShow();
 ```
 
-> Note, actions are using the same `ResolvesVisiblity` trait as fields, but methods like `visibleOnUpdate()` have no effect.
-
-You can also pass a `Closure` to any of the listed methods, to fully customize the visibility logic:
-
-```php
-$this->visible(static function (RootRequest $request): bool {
-    return $request->user()->can('batchPublish', Post::class);
-});
-
-$this->hidden(static function (RootRequest $request): bool {
-    return $request->user()->cannot('batchPublish', Post::class);
-});
-```
-
-### Routes
-
-Actions can also register routes. If you wish to register a custom route you can easily do that:
-
-```php
-/**
- * The routes that should be registerd.
- *
- * @param  \Illuminate\Routing\Router  $router
- * @return void
- */
-public function routes(Router $router): void
-{
-    parent::rotues($router);
-
-    $router->post(sprintf('%s/%s', $this->getKey(), 'custom-action'), function (ActionRequest $request) {
-        // Handle request...
-    });
-}
-```
+> Note, actions are using the `ResolvesVisiblity` trait, but methods like `visibleOnUpdate()` have no effect.
 
 ### Destructive Actions
 

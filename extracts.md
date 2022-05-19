@@ -209,24 +209,3 @@ $action->authorize(static function (RootRequest $request): bool {
     return $request->user()->can('viewLongPosts');
 });
 ```
-
-### Routes
-
-Extracts can also register routes. If you wish to register a custom route you can easily do that:
-
-```php
-/**
- * The routes that should be registerd.
- *
- * @param  \Illuminate\Routing\Router  $router
- * @return void
- */
-public function routes(Router $router): void
-{
-    parent::rotues($router);
-
-    $router->post(sprintf('%s/%s', $this->getKey(), 'custom-extract'), function (ActionRequest $request) {
-        // Handle request...
-    });
-}
-```

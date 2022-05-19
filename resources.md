@@ -44,7 +44,6 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Models\Post;
-use Cone\Root\Root;
 use Cone\Root\RootApplicationServiceProvider;
 
 class RootServiceProvider extends RootApplicationServiceProvider

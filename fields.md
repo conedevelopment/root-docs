@@ -8,7 +8,7 @@ Fields are handlers for the model attributes. They are responsible for saving an
 
 ## Registering Fields
 
-You can register actions in resources, extracts and actions, by using the `fields` method.
+You can register fields in resources, extracts, actions and, by using the `fields` method.
 
 ## Values
 
