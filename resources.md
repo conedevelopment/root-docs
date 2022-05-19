@@ -142,8 +142,8 @@ Actions are responsible for performing a specific action on a set of models. You
 
 ```php
 use App\Root\Actions\Publish;
-use Cone\Root\Resources\Resource;
 use Cone\Root\Http\Requests\RootRequest;
+use Cone\Root\Resources\Resource;
 
 class PostResource extends Resource
 {

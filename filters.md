@@ -10,7 +10,7 @@ Filters are responsible for transforming the current request to a database query
 
 You can generate new filter classes by calling the `root:filter` artisan command:
 
-```php
+```sh
 php artisan root:filter Category
 ```
 

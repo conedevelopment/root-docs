@@ -10,7 +10,7 @@ Actions are runnable tasks on a given collection of models. Actions can be regis
 
 You can generate new action classes by calling the `root:action` artisan command:
 
-```php
+```sh
 php artisan root:action Publish
 ```
 
@@ -106,7 +106,7 @@ $this->hidden(static function (RootRequest $request): bool {
 
 ### Routes
 
-Actions can also register routes for themselves and their fields. The routes are automatically registered. If you wish to register a custom route for an action you can easily do that:
+Actions can also register routes. If you wish to register a custom route you can easily do that:
 
 ```php
 /**
