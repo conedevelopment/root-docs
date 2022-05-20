@@ -6,6 +6,14 @@ order: 5
 
 Fields are handlers for the model attributes. They are responsible for saving and displaying the given attribute of the resource model.
 
+## Creating Fields
+
+In some cases, the default fields are not enough, or don't provide the flexibility you need. In that scenario you can create your own custom fields easily. To generate a field easily you can call the following artisan command:
+
+```sh
+php artisan root:field Autocomplete
+```
+
 ## Registering Fields
 
 You can register fields in resources, extracts, actions and other fields by using the `fields` method.
@@ -43,14 +51,6 @@ $resource->withFields(static function (RootRequest $request, Fields $fields): Fi
 ```
 
 > You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
-
-## Creating Fields
-
-In some cases, the default fields are not enough, or don't provide the flexibility you need. In that scenario you can create your own custom fields easily. To generate a field easily you can call the following artisan command:
-
-```sh
-php artisan root:field Autocomplete
-```
 
 ### Configuration
 
@@ -237,6 +237,44 @@ $field->searchable(false);
 
 ## Available Fields
 
+### BelongsTo
+
+### BelongsToMany
+
+### Boolean
+
+### Checkbox
+
+### Color
+
+### Date
+
+### Editor
+
+### File
+
+### HasMany
+
+### HasOne
+
+### Json
+
+### Media
+
+### MorphMany
+
+### MorphOne
+
+### MorphToMany
+
+### Number
+
+### Radio
+
+### Range
+
+### Select
+
 ### Text
 
 The `Text` field is typically a handler for `string` model attributes:
@@ -259,21 +297,3 @@ $field->maxlength(40);
 ```
 
 ### Textarea
-### Number
-### Select
-### Checkbox
-### Radio
-### Boolean
-### Range
-### Color
-### Date
-### Editor
-### Media
-### File
-### BelongsTo
-### BelongsToMany
-### HasOne
-### HasMany
-### MorphOne
-### MorphMany
-### MorphToMany
