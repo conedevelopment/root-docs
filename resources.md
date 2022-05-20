@@ -177,7 +177,7 @@ class PostResource extends Resource
 
 > For the detailed documentation visit the [widgets](/docs/widgets) section.
 
-Widgets are cards that display some information or any content you want to display. You can easily define widgets on your resource by using the `widgets` method:
+Widgets are cards that hold some information or any content you want to display. You can easily define widgets on your resource by using the `widgets` method:
 
 ```php
 use App\Root\Widgets\TotalPosts;
