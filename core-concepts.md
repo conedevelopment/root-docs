@@ -14,7 +14,7 @@ Root is a quite simple, drop-in admin package. It means, it requires less config
 
 However, it comes with a price: Root is scoped to small, medium-sized projects: e-commerce or generic CMS projects.
 
-## Comparing to other packages/solutions
+## Comparing to other packages, solutions
 
 Root is heavily inspired by [Symfony EasyAdmin](https://symfony.com/bundles/EasyAdminBundle/current/index.html) and [Lavel Nova](https://nova.laravel.com/).
 

@@ -257,6 +257,8 @@ $field->searchable(false);
 
 ### HasOne
 
+### ID
+
 ### Json
 
 ### Media
@@ -275,6 +277,8 @@ $field->searchable(false);
 
 ### Select
 
+### Tag
+
 ### Text
 
 The `Text` field is typically a handler for `string` model attributes:
@@ -286,7 +290,7 @@ $field = Text::make(__('Title'), 'title');
 You can also apply modifiers on a text field:
 
 ```php
-// Add the "size" HTML input attribute
+// Adds the "size" HTML input attribute
 $field->size(40);
 
 // Adds the "minlength" HTML input attribute
@@ -297,3 +301,19 @@ $field->maxlength(40);
 ```
 
 ### Textarea
+
+The `Textarea` field is typically a handler for longer `string` model attributes:
+
+```php
+$field = Textarea::make(__('Bio'), 'bio');
+```
+
+You can also apply modifiers on a text field:
+
+```php
+// Adds the "rows" HTML input attribute
+$field->rows(20);
+
+// Adds the "cols" HTML input attribute
+$field->cols(100);
+```
