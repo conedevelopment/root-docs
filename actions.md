@@ -30,9 +30,9 @@ use Cone\Root\Http\Requests\RootRequest;
  */
 public function actions(RootRequest $request): array
 {
-    return [
+    return array_merge(parent::actions($request), [
         Publish::make(),
-    ];
+    ]);
 }
 ```
 
