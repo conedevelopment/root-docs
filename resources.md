@@ -28,13 +28,10 @@ namespace App\Models;
 use App\Root\Resources\PostResource;
 use Cone\Root\Interfaces\Resourceable;
 use Cone\Root\Resources\Resource;
-use Cone\Root\Traits\InteractsWithResource;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model implements Resourcable
 {
-    use InteractsWithResource;
-
     /**
      * Get the resource representation of the model.
      *
