@@ -33,7 +33,7 @@ public function actions(Request $request): array
 }
 ```
 
-Alternatively, you can use `withActions` method on an object that resovles actions. It can be useful when you just want to hook into the object for some reason.
+Alternatively, you can use `withActions` method on an object that resolves actions. It can be useful when you just want to hook into the object for some reason.
 
 ```php
 use App\Root\Actions\SendPasswordResetNotification;
@@ -109,7 +109,7 @@ $action->hiddenOnIndex();
 $action->hiddenOnShow();
 ```
 
-> Note, actions are using the `ResolvesVisiblity` trait, but methods like `visibleOnUpdate()` have no effect.
+> Note, actions are using the `ResolvesVisibility` trait, but methods like `visibleOnUpdate()` have no effect.
 
 ### Destructive Actions
 

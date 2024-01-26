@@ -36,7 +36,7 @@ public function widgets(Request $request): array
 }
 ```
 
-Alternatively, you can use `withWidgets` method on an object that resovles widgets. It can be useful when you just want to hook into the object for some reason.
+Alternatively, you can use `withWidgets` method on an object that resolves widgets. It can be useful when you just want to hook into the object for some reason.
 
 ```php
 use App\Root\Widgets\PostCount;

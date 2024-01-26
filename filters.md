@@ -36,7 +36,7 @@ public function filters(Request $request): array
 }
 ```
 
-Alternatively, you can use `withFilters` method on an object that resovles filters. It can be useful when you just want to hook into the object for some reason.
+Alternatively, you can use `withFilters` method on an object that resolves filters. It can be useful when you just want to hook into the object for some reason.
 
 ```php
 use App\Root\Filters\Category;
