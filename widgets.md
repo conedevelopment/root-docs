@@ -20,15 +20,15 @@ You can register actions in resources and extracts, by using the `widgets` metho
 
 ```php
 use App\Root\Widgets\PostCount;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
 /**
  * Define the widgets for the resource.
  *
- * @param  \Cone\Root\Http\Requests\RootRequest  $request
+ * @param  \Illuminate\Http\Request  $request
  * @return array
  */
-public function widgets(RootRequest $request): array
+public function widgets(Request $request): array
 {
     return array_merge(parent::widgets($request), [
         PostCount::make(),
@@ -41,9 +41,9 @@ Alternatively, you can use `withWidgets` method on an object that resovles widge
 ```php
 use App\Root\Widgets\PostCount;
 use Cone\Root\Support\Collections\Widgets;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
-$resource->withWidgets(static function (RootRequest $request, Widgets $widgets): Widgets {
+$resource->withWidgets(static function (Request $request, Widgets $widgets): Widgets {
     return $widgets->merge([
         PostCount::make(),
     ]);
@@ -59,7 +59,7 @@ $resource->withWidgets(static function (RootRequest $request, Widgets $widgets):
 You may allow or disallow interaction with widgets. To do so, you can call the `authorize` method on the widget instance:
 
 ```php
-$widget->authorize(static function (RootRequest $request): bool {
+$widget->authorize(static function (Request $request): bool {
     return $request->user()->can('viewPostCount');
 });
 ```
@@ -69,11 +69,11 @@ $widget->authorize(static function (RootRequest $request): bool {
 You may show or hide widgets based on the current resource view. For example, some widgets might be visible on the index page, while others should be hidden. You can easily customize the action visibility logic using the `visibleOn` and `hiddenOn` methods:
 
 ```php
-$widget->visibleOn(static function (RootRequest $request): bool {
+$widget->visibleOn(static function (Request $request): bool {
     return $request->user()->can('viewPostCount');
 });
 
-$widget->hiddenOn(static function (RootRequest $request): bool {
+$widget->hiddenOn(static function (Request $request): bool {
     return $request->user()->cannot('viewPostCount');
 });
 ```
@@ -112,7 +112,7 @@ You can customize the data passed to the blade template by using the `data` meth
 
 ```php
 use App\Models\Post;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 use Cone\Root\Widgets\Widget;
 
 class PostCount extends Widget
@@ -120,10 +120,10 @@ class PostCount extends Widget
     /**
      * Get the data.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function data(RootRequest $request): array
+    public function data(Request $request): array
     {
         return [
             'count' => Post::query()->count(),
@@ -136,9 +136,9 @@ Alternatively, you can use `with` method on a widget. It can be useful when you 
 
 ```php
 use App\Models\Post;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
-$widget->with(static function (RootRequest $request): array {
+$widget->with(static function (Request $request): array {
     return [
         'published_count' => Post::query()->published()->count(),
     ];

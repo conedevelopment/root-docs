@@ -20,8 +20,6 @@ class RootServiceProvider extends RootApplicationServiceProvider
 {
     /**
      * The dashboard widgets.
-     *
-     * @return array
      */
     protected function widgets(): array
     {

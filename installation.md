@@ -10,9 +10,9 @@ Before moving on, please check out the [Laravel documentation](https://laravel.c
 
 Requirements:
 
-- PHP `8.0+`
+- PHP `8.2+`
 - PHP `GD` and `EXIF` extensions
-- Laravel `^9.0`
+- Laravel `^10.0`
 
 ## Installation
 
@@ -31,7 +31,7 @@ After installing the package, run the `root:install` command. It will run the mi
 Also, you may populate your local database with _fake_ data. To do so, pass the `--seed` flag to the command.
 
 ```sh
-php artisan bazar:root --seed
+php artisan install:root --seed
 ```
 
 ### Publishing Assets
@@ -54,30 +54,17 @@ php artisan storage:link
 
 ### Extending the User Model
 
-Root comes with a Cone\Root\Models\User model by default, that provides some functionality by default. Also, it brings the default authentication services; you may keep clean your `App\Models\User` model and extend the one that comes with Root:
+Root comes with a `Cone\Root\Models\User` model by default, that provides some functionality. Also, it brings the default authentication services; you may keep clean your `App\Models\User` model and extend the one that comes with Root:
 
 ```php
 namespace App\Models;
 
-use App\Root\Resources\UserResource;
 use Cone\Root\Models\User as Model;
-use Cone\Root\Resources\Resource;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Model implements MustVerifyEmail
 {
-    use HasApiTokens;
-
-    /**
-     * Get the resource representation of the model.
-     *
-     * @return \Cone\Root\Resources\Resource
-     */
-    public static function toResource(): Resource
-    {
-        return new UserResource(static::class);
-    }
+    //
 }
 ```
 

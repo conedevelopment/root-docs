@@ -20,15 +20,15 @@ You can register fields in resources, extracts, actions and other fields by usin
 
 ```php
 use Cone\Root\Fields\Text;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
 /**
  * Define the fields for the resource.
  *
- * @param  \Cone\Root\Http\Requests\RootRequest  $request
+ * @param  \Illuminate\Http\Request  $request
  * @return array
  */
-public function fields(RootRequest $request): array
+public function fields(Request $request): array
 {
     return array_merge(parent::fields($request), [
         Text::make(__('Title'), 'title'),
@@ -40,10 +40,10 @@ Alternatively, you can use `withFields` method on an object that resovles action
 
 ```php
 use App\Root\Fields\Text;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 use Cone\Root\Support\Collections\Fields;
 
-$resource->withFields(static function (RootRequest $request, Fields $fields): Fields {
+$resource->withFields(static function (Request $request, Fields $fields): Fields {
     return $fields->merge([
         Text::make(__('Title'), 'title'),
     ]);
@@ -96,7 +96,7 @@ You may define custom value hydration logic on your field clasas. To do so, you 
 namespace App\Root\Fields;
 
 use Cone\Root\Fields\Field;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 use Illuminate\Databsase\Eloquent\Model;
 
 class CustomField extends Field
@@ -104,12 +104,12 @@ class CustomField extends Field
     /**
      * Hydrate the model.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  mixed  $value
      * @return void
      */
-    public function hydrate(RootRequest $request, Model $model, mixed $value): void
+    public function hydrate(Request $request, Model $model, mixed $value): void
     {
         $model->setAttribute($this->name, $value);
     }
@@ -121,9 +121,9 @@ class CustomField extends Field
 You may allow/disallow interaction with fields. To do so, you can call the `authorize` method on the field instance:
 
 ```php
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
-$field->authorize(static function (RootRequest $request): bool {
+$field->authorize(static function (Request $request): bool {
     return $request->user()->can('create', Post::class);
 });
 ```
@@ -131,11 +131,11 @@ $field->authorize(static function (RootRequest $request): bool {
 Also, when authorizing fields, pivot fields or actions, you may have access to the models of the context:
 
 ```php
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
 // Action or top level field
-$field->authorize(static function (RootRequest $request, ?Model $model = null): bool {
+$field->authorize(static function (Request $request, ?Model $model = null): bool {
     if (is_null($model)) {
         return $request->user()->can('create', Post::class);
     }
@@ -144,7 +144,7 @@ $field->authorize(static function (RootRequest $request, ?Model $model = null): 
 });
 
 // Pivot field
-$field->authorize(static function (RootRequest $request, ?Model $model = null, ?Model $related = null): bool {
+$field->authorize(static function (Request $request, ?Model $model = null, ?Model $related = null): bool {
     if (is_null($model) || is_null($related)) {
         return $request->user()->can('create', Tag::class);
     }
@@ -160,13 +160,13 @@ $field->authorize(static function (RootRequest $request, ?Model $model = null, ?
 You may show or hide fields based on the current resource view. For example, some fields might be visible on the index page, while others should be hidden. You can easily customize the field visibility logic using the `visible` method:
 
 ```php
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
-$field->visibleOn(static function (RootRequest $request): bool {
+$field->visibleOn(static function (Request $request): bool {
     return $request->user()->isAdmin();
 });
 
-$field->hiddenOn(static function (RootRequest $request): bool {
+$field->hiddenOn(static function (Request $request): bool {
     return ! $request->user()->isAdmin();
 });
 ```
@@ -192,13 +192,13 @@ $field->hiddenOnForm();
 You can also pass a `Closure` to any of the listed methods, to fully customize the visibility logic:
 
 ```php
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
-$this->visible(static function (RootRequest $request): bool {
+$this->visible(static function (Request $request): bool {
     return $request->user()->can('attachTag', Post::class);
 });
 
-$this->hidden(static function (RootRequest $request): bool {
+$this->hidden(static function (Request $request): bool {
     return $request->user()->cannot('attachTag', Post::class);
 });
 ```
@@ -208,13 +208,13 @@ $this->hidden(static function (RootRequest $request): bool {
 You may define validation rules for your field instances. To do so, you can call the `rules`, `createRules` and `updateRules` on the field instance:
 
 ```php
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
 $field->rules(['string', 'required'])
     ->createRules(['unique:posts'])
-    ->updateRules(static function (RootRequest $request, Model $model): array {
+    ->updateRules(static function (Request $request, Model $model): array {
         return [Rule::unique('posts')->ignoreModel($model)];
     });
 ```
@@ -237,10 +237,6 @@ $field->searchable(false);
 
 ## Available Fields
 
-### BelongsTo
-
-### BelongsToMany
-
 ### Boolean
 
 ### Checkbox
@@ -253,21 +249,11 @@ $field->searchable(false);
 
 ### File
 
-### HasMany
-
-### HasOne
-
 ### ID
 
 ### Json
 
 ### Media
-
-### MorphMany
-
-### MorphOne
-
-### MorphToMany
 
 ### Number
 
@@ -317,3 +303,29 @@ $field->rows(20);
 // Adds the "cols" HTML input attribute
 $field->cols(100);
 ```
+
+### Relation Fields
+
+Relation fields are represanting Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
+
+#### BelongsTo
+
+The `BelongsTo` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\BelongsTo` relation:
+
+```php
+$field = BelongsTo::make(__('Author'), 'author');
+```
+
+> Root assumes that there is an already defined `author` relation on the Resource Model.
+
+#### BelongsToMany
+
+#### HasMany
+
+#### HasOne
+
+#### MorphMany
+
+#### MorphOne
+
+#### MorphToMany

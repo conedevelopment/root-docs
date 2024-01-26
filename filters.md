@@ -20,15 +20,15 @@ You can register filters in resources and extracts, by using the `filters` metho
 
 ```php
 use App\Root\Filters\Category;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
 /**
  * Define the filters for the resource.
  *
- * @param  \Cone\Root\Http\Requests\RootRequest  $request
+ * @param  \Illuminate\Http\Request  $request
  * @return array
  */
-public function filters(RootRequest $request): array
+public function filters(Request $request): array
 {
     return [
         Category::make(),
@@ -41,9 +41,9 @@ Alternatively, you can use `withFilters` method on an object that resovles filte
 ```php
 use App\Root\Filters\Category;
 use Cone\Root\Support\Collections\Filters;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
-$resource->withFilters(static function (RootRequest $request, Filters $filters): Filters {
+$resource->withFilters(static function (Request $request, Filters $filters): Filters {
     return $filters->merge([
         Category::make(),
     ]);
@@ -62,7 +62,7 @@ Filters have an `option` method, where you can define the selectable options:
 namespace App\Root\Filters;
 
 use Cone\Root\Filters\Filter;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
 class Category extends Filter
@@ -70,12 +70,12 @@ class Category extends Filter
     /**
      * Apply the filter on the query.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $value
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function apply(RootRequest $request, Builder $query, mixed $value): Builder
+    public function apply(Request $request, Builder $query, mixed $value): Builder
     {
         return $query->where('category', $value);
     }
@@ -83,10 +83,10 @@ class Category extends Filter
     /**
      * Get the filter options.
      *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function options(RootRequest $request): array
+    public function options(Request $request): array
     {
         return [
             'product' => 'Product',
@@ -149,7 +149,7 @@ class FunctionalFilter extends Filter
 You may allow or disallow interaction with filters. To do so, you can call the `authorize` method on the filter instance:
 
 ```php
-$filter->authorize(static function (RootRequest $request): bool {
+$filter->authorize(static function (Request $request): bool {
     return $request->user()->isAdmin();
 });
 ```

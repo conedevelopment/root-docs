@@ -11,7 +11,7 @@ Actions are runnable tasks on a given collection of models. Actions can be regis
 You can generate new action classes by calling the `root:action` artisan command:
 
 ```sh
-php artisan root:action Publish
+php artisan root:action SendPasswordResetNotification
 ```
 
 ## Registering Actions
@@ -19,63 +19,34 @@ php artisan root:action Publish
 You can register actions in resources and extracts, by using the `actions` method.
 
 ```php
-use App\Root\Actions\Publish;
-use Cone\Root\Http\Requests\RootRequest;
+use App\Root\Actions\SendPasswordResetNotification;
+use Illuminate\Http\Request;
 
 /**
  * Define the actions for the resource.
- *
- * @param  \Cone\Root\Http\Requests\RootRequest  $request
- * @return array
  */
-public function actions(RootRequest $request): array
+public function actions(Request $request): array
 {
-    return array_merge(parent::actions($request), [
-        Publish::make(),
-    ]);
+    return [
+        new SendPasswordResetNotification(),
+    ];
 }
 ```
 
 Alternatively, you can use `withActions` method on an object that resovles actions. It can be useful when you just want to hook into the object for some reason.
 
 ```php
-use App\Root\Actions\Publish;
-use Cone\Root\Support\Collections\Actions;
-use Cone\Root\Http\Requests\RootRequest;
+use App\Root\Actions\SendPasswordResetNotification;
+use Illuminate\Http\Request;
 
-$resource->withActions(static function (RootRequest $request, Actions $actions): Actions {
-    return $actions->merge([
-        Publish::make(),
-    ]);
+$resource->withActions(static function (Request $request): array {
+    return [
+        new SendPasswordResetNotification(),
+    ];
 });
 ```
 
-> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
-
 ## Configuration
-
-### Customizing the Query
-
-You may customize the query of the action you are working with. While its base query is provided by its parent resource or extract, it's very possible you want to perform a completely different custom database query.
-
-```php
-use Cone\Root\Actions\Action;
-use Cone\Root\Http\Requests\RootRequest;
-
-class Publish extends Action
-{
-    /**
-     * Resolve the query for the action.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function resolveQuery(RootRequest $request): Builder
-    {
-        return parent::resolveQuery($request)->whereNull('published_at');
-    }
-}
-```
 
 ### Fields
 
@@ -86,21 +57,18 @@ You may define fields for any action:
 ```php
 use Cone\Root\Actions\Action;
 use Cone\Root\Fields\Date;
-use Cone\Root\Http\Requests\RootRequest;
+use Illuminate\Http\Request;
 
 class Publish extends Action
 {
     /**
      * Define the fields for the action.
-     *
-     * @param  \Cone\Root\Http\Requests\RootRequest  $request
-     * @return array
      */
-    public function fields(RootRequest $request): array
+    public function fields(Request $request): array
     {
-        return array_merge(parent::fields($request), [
+        return [
             Date::make('Published at')->withTime(),
-        ]);
+        ];
     }
 }
 ```
@@ -112,7 +80,7 @@ class Publish extends Action
 You may allow or disallow interaction with actions. To do so, you can call the `authorize` method on the action instance:
 
 ```php
-$action->authorize(static function (RootRequest $request): bool {
+$action->authorize(static function (Request $request): bool {
     return $request->user()->can('batchPublish', Post::class);
 });
 ```
@@ -122,11 +90,11 @@ $action->authorize(static function (RootRequest $request): bool {
 You may show or hide actions based on the current resource view. For example, some actions might be visible on the index page, while others should be hidden. You can easily customize the action visibility logic using the `visibleOn` and `hiddenOn` methods:
 
 ```php
-$action->visibleOn(static function (RootRequest $request): bool {
+$action->visibleOn(static function (Request $request): bool {
     return $request->user()->can('batchPublish', Post::class);
 });
 
-$action->hiddenOn(static function (RootRequest $request): bool {
+$action->hiddenOn(static function (Request $request): bool {
     return $request->user()->cannot('batchPublish', Post::class);
 });
 ```
