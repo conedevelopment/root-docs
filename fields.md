@@ -36,7 +36,7 @@ public function fields(Request $request): array
 }
 ```
 
-Alternatively, you can use `withFields` method on an object that resovles actions. It can be useful when you just want to hook into the object for some reason.
+Alternatively, you can use `withFields` method on an object that resolves actions. It can be useful when you just want to hook into the object for some reason.
 
 ```php
 use App\Root\Fields\Text;
