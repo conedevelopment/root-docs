@@ -24,15 +24,12 @@ use Illuminate\Http\Request;
 
 /**
  * Define the fields for the resource.
- *
- * @param  \Illuminate\Http\Request  $request
- * @return array
  */
 public function fields(Request $request): array
 {
-    return array_merge(parent::fields($request), [
+    return [
         Text::make(__('Title'), 'title'),
-    ]);
+    ];
 }
 ```
 
@@ -41,16 +38,13 @@ Alternatively, you can use `withFields` method on an object that resolves action
 ```php
 use App\Root\Fields\Text;
 use Illuminate\Http\Request;
-use Cone\Root\Support\Collections\Fields;
 
-$resource->withFields(static function (Request $request, Fields $fields): Fields {
-    return $fields->merge([
+$resource->withFields(static function (Request $request): array {
+    return [
         Text::make(__('Title'), 'title'),
-    ]);
+    ];
 });
 ```
-
-> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
 
 ### Configuration
 
@@ -66,7 +60,7 @@ use Illuminate\Databsase\Eloquent\Model;
 use Illuminate\Http\Request;
 
 Text::make('Title')
-    ->default(static function (Request $request, Model $model, mixed $value): string {
+    ->value(static function (Request $request, Model $model, mixed $value): string {
         return is_null($value) ? 'foo' : $value;
     });
 ```
@@ -81,10 +75,11 @@ You may define custom value formatters for the field values. In that case you ca
 use Cone\Root\Fields\Number;
 use Illuminate\Databsase\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Number;
 
 Number::make('Price')
     ->format(static function (Request $request, Model $model, mixed $value): string {
-        return sprintf('%d USD', $value);
+        return Number::currency($value);
     });
 ```
 
@@ -103,11 +98,6 @@ class CustomField extends Field
 {
     /**
      * Hydrate the model.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
-     * @return void
      */
     public function hydrate(Request $request, Model $model, mixed $value): void
     {
@@ -157,50 +147,12 @@ $field->authorize(static function (Request $request, ?Model $model = null, ?Mode
 
 ### Visibility
 
-You may show or hide fields based on the current resource view. For example, some fields might be visible on the index page, while others should be hidden. You can easily customize the field visibility logic using the `visible` method:
+You may show or hide fields based on the current resource view. For example, some fields might be visible on the `index` page, while others should be hidden. You can easily customize the action visibility logic using the `visibleOn` and `hiddenOn` methods:
 
 ```php
-use Illuminate\Http\Request;
+$field->visibleOn(['index', 'show']);
 
-$field->visibleOn(static function (Request $request): bool {
-    return $request->user()->isAdmin();
-});
-
-$field->hiddenOn(static function (Request $request): bool {
-    return ! $request->user()->isAdmin();
-});
-```
-
-Also, you can use the built-in methods as well. They are enough in most of the cases:
-
-```php
-$field->visibleOnIndex();
-$field->visibleOnCreate();
-$field->visibleOnShow();
-$field->visibleOnUpdate();
-$field->visibleOnDisplay();
-$field->visibleOnForm();
-
-$field->hiddenOnIndex();
-$field->hiddenOnCreate();
-$field->hiddenOnShow();
-$field->hiddenOnUpdate();
-$field->hiddenOnDisplay();
-$field->hiddenOnForm();
-```
-
-You can also pass a `Closure` to any of the listed methods, to fully customize the visibility logic:
-
-```php
-use Illuminate\Http\Request;
-
-$this->visible(static function (Request $request): bool {
-    return $request->user()->can('attachTag', Post::class);
-});
-
-$this->hidden(static function (Request $request): bool {
-    return $request->user()->cannot('attachTag', Post::class);
-});
+$field->hiddenOn(['update', 'create']);
 ```
 
 ### Validation
@@ -208,8 +160,8 @@ $this->hidden(static function (Request $request): bool {
 You may define validation rules for your field instances. To do so, you can call the `rules`, `createRules` and `updateRules` on the field instance:
 
 ```php
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 $field->rules(['string', 'required'])
@@ -250,8 +202,6 @@ $field->searchable(false);
 ### File
 
 ### ID
-
-### Json
 
 ### Media
 

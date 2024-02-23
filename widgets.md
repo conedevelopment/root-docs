@@ -24,9 +24,6 @@ use Illuminate\Http\Request;
 
 /**
  * Define the widgets for the resource.
- *
- * @param  \Illuminate\Http\Request  $request
- * @return array
  */
 public function widgets(Request $request): array
 {
@@ -69,23 +66,9 @@ $widget->authorize(static function (Request $request): bool {
 You may show or hide widgets based on the current resource view. For example, some widgets might be visible on the index page, while others should be hidden. You can easily customize the action visibility logic using the `visibleOn` and `hiddenOn` methods:
 
 ```php
-$widget->visibleOn(static function (Request $request): bool {
-    return $request->user()->can('viewPostCount');
-});
+$field->visibleOn(['index']);
 
-$widget->hiddenOn(static function (Request $request): bool {
-    return $request->user()->cannot('viewPostCount');
-});
-```
-
-Also, you can use the built-in methods as well:
-
-```php
-$widget->visibleOnIndex();
-$widget->visibleOnShow();
-
-$widget->hiddenOnIndex();
-$widget->hiddenOnShow();
+$field->hiddenOn(['index']);
 ```
 
 ### Blade Templates
@@ -99,8 +82,6 @@ class PostCount extends Widget
 {
     /**
      * The Blade template.
-     *
-     * @var string
      */
     protected string $template = 'widgets.post-count;
 }
@@ -112,71 +93,19 @@ You can customize the data passed to the blade template by using the `data` meth
 
 ```php
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Cone\Root\Widgets\Widget;
+use Illuminate\Http\Request;
 
 class PostCount extends Widget
 {
     /**
      * Get the data.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     public function data(Request $request): array
     {
-        return [
+        return array_merge(parent::data($request), [
             'count' => Post::query()->count(),
-        ];
+        ]);
     }
 }
 ```
-
-Alternatively, you can use `with` method on a widget. It can be useful when you just want to hook into the object for some reason.
-
-```php
-use App\Models\Post;
-use Illuminate\Http\Request;
-
-$widget->with(static function (Request $request): array {
-    return [
-        'published_count' => Post::query()->published()->count(),
-    ];
-});
-```
-
-> You can also pass an `array` instead of a `Closure`.
-
-### Custom Components
-
-By default, widget use the `Widget` component, however you can use any component you want. You may also register your own custom component as well:
-
-```js
-document.addEventListener('root:booting', ({ detail }) => {
-    detail.app.component('CustomWidget', require('./Components/CustomWidget').defaul);
-});
-```
-
-```php
-use Cone\Root\Widgets\Widget;
-
-class PostCount extends Widget
-{
-    /**
-     * The Vue component.
-     *
-     * @var string|null
-     */
-    protected string $component = 'CustomWidget';
-}
-```
-
-### Async Widgets
-
-In some scenarios, you may want your widget to be asynchronously loaded. For example, when the rendered template generates a huge chunk of data, you may want to load the component in another HTTP request. To do so, call the `ąsyc` method on  the widget instance:
-
-```php
-PostCount::make()->async();
-```
-
-> Please note, all the routes for the asnyc widgets will be registered automatically.

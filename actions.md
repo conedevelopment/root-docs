@@ -87,29 +87,13 @@ $action->authorize(static function (Request $request): bool {
 
 ### Visibility
 
-You may show or hide actions based on the current resource view. For example, some actions might be visible on the index page, while others should be hidden. You can easily customize the action visibility logic using the `visibleOn` and `hiddenOn` methods:
+You may show or hide actions based on the current resource view. For example, some actions might be visible on the `index` page, while others should be hidden. You can easily customize the action visibility logic using the `visibleOn` and `hiddenOn` methods:
 
 ```php
-$action->visibleOn(static function (Request $request): bool {
-    return $request->user()->can('batchPublish', Post::class);
-});
+$field->visibleOn(['index', 'show']);
 
-$action->hiddenOn(static function (Request $request): bool {
-    return $request->user()->cannot('batchPublish', Post::class);
-});
+$field->hiddenOn(['update', 'create']);
 ```
-
-Also, you can use the built-in methods as well:
-
-```php
-$action->visibleOnIndex();
-$action->visibleOnShow();
-
-$action->hiddenOnIndex();
-$action->hiddenOnShow();
-```
-
-> Note, actions are using the `ResolvesVisibility` trait, but methods like `visibleOnUpdate()` have no effect.
 
 ### Destructive Actions
 
@@ -125,4 +109,12 @@ You may mark an action as confirmable. That means, when pressing the `Run` butto
 
 ```php
 $action->confirmable();
+```
+
+### Standalone Actions
+
+You may mark an action as standalone. That means, the action does not need any selected models. Also, the `$models` collection in the `handle` method will be empty.
+
+```php
+$action->standalone();
 ```

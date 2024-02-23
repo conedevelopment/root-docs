@@ -24,9 +24,6 @@ use Illuminate\Http\Request;
 
 /**
  * Define the filters for the resource.
- *
- * @param  \Illuminate\Http\Request  $request
- * @return array
  */
 public function filters(Request $request): array
 {
@@ -43,14 +40,12 @@ use App\Root\Filters\Category;
 use Cone\Root\Support\Collections\Filters;
 use Illuminate\Http\Request;
 
-$resource->withFilters(static function (Request $request, Filters $filters): Filters {
-    return $filters->merge([
+$resource->withFilters(static function (Request $request): array {
+    return [
         Category::make(),
-    ]);
+    ];
 });
 ```
-
-> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
 
 ## Configuration
 
@@ -69,11 +64,6 @@ class Category extends Filter
 {
     /**
      * Apply the filter on the query.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function apply(Request $request, Builder $query, mixed $value): Builder
     {
@@ -82,9 +72,6 @@ class Category extends Filter
 
     /**
      * Get the filter options.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     public function options(Request $request): array
     {
@@ -100,30 +87,6 @@ Also, you may configure a select filter with multiple selectable choices. To do 
 
 ```php
 Category::make()->multiple();
-```
-
-### Custom Components
-
-By default, filters use the `Select` form component, however you can use any component you want. You may also register your own custom component as well:
-
-```js
-document.addEventListener('root:booting', ({ detail }) => {
-    detail.app.component('CustomFilter', require('./Components/CustomFilter').defaul);
-});
-```
-
-```php
-use Cone\Root\Filters\Filter;
-
-class CustomFilter extends Filter
-{
-    /**
-     * The Vue component.
-     *
-     * @var string|null
-     */
-    protected ?string $component = 'CustomFilter';
-}
 ```
 
 ### Functional Filters
