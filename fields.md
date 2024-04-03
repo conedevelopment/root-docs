@@ -85,7 +85,7 @@ Number::make('Price')
 
 ### Value Hydration
 
-You may define custom value hydration logic on your field clasas. To do so, you can easily override the default `hydrate` method:
+You may define custom value hydration logic on your field class. To do so, you can easily override the default `hydrate` method:
 
 ```php
 namespace App\Root\Fields;
@@ -256,7 +256,7 @@ $field->cols(100);
 
 ### Relation Fields
 
-Relation fields are represanting Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
+Relation fields are representing Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
 
 #### BelongsTo
 

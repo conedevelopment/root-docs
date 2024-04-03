@@ -77,7 +77,7 @@ namespace App\Models;
 
 use App\Contracts\Models\Addon as Contract;
 use Cone\Bazar\Concerns\InteractsWithProxy;
-use Illuminate\Databse\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Addon extends Model implements Contract
 {
