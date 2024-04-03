@@ -56,7 +56,7 @@ It may happen that the attribute does not exists on the model that matches with 
 
 ```php
 use Cone\Root\Fields\Text;
-use Illuminate\Databsase\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 Text::make('Title')
@@ -73,7 +73,7 @@ You may define custom value formatters for the field values. In that case you ca
 
 ```php
 use Cone\Root\Fields\Number;
-use Illuminate\Databsase\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Number;
 
@@ -85,14 +85,14 @@ Number::make('Price')
 
 ### Value Hydration
 
-You may define custom value hydration logic on your field clasas. To do so, you can easily override the default `hydrate` method:
+You may define custom value hydration logic on your field class. To do so, you can easily override the default `hydrate` method:
 
 ```php
 namespace App\Root\Fields;
 
 use Cone\Root\Fields\Field;
 use Illuminate\Http\Request;
-use Illuminate\Databsase\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class CustomField extends Field
 {
@@ -256,7 +256,7 @@ $field->cols(100);
 
 ### Relation Fields
 
-Relation fields are represanting Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
+Relation fields are representing Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
 
 #### BelongsTo
 
