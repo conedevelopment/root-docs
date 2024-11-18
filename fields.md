@@ -186,7 +186,46 @@ $field = Checkbox::make(__('Categories'), 'categories')
 
 ### Color
 
+The `Color` field is typically a handler for `color` model attributes:
+
+```php
+$field = Color::make(__('Background Color'), 'bg_color');
+```
+
+> You may use the `hex_color` validation rule for this field. By default no rules attached.
+
 ### Date
+
+The `Date` field is typically a handler for `date` or `datetime` model attributes:
+
+```php
+$field = Date::make(__('Expires at'), 'expires_at');
+```
+
+> You may use the `date` validation rule for this field. By default no rules attached.
+
+You can also apply modifiers on a `Date` field:
+
+```php
+// Adds/removes a time handler for the field
+$field->withTime();
+$field->withTime(false);
+
+// Sets the displayed timezone for the input
+// Note, the value is saved to the database in the app's timezone (normally UTC)
+$field->timezone('Europe/Budapest');
+
+// Adds the "step" HTML input attribute
+$field->step(1);
+
+// Adds the "min" HTML input attribute
+$field->min('2024-01-01');
+$field->min(now()->addDays(7));
+
+// Adds the "max" HTML input attribute
+$field->max('2024-01-01');
+$field->max(now()->addDays(7));
+```
 
 ### Editor
 
