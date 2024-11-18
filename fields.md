@@ -154,15 +154,34 @@ $field = Boolean::make(__('Enabled'), 'enabled');
 
 ### Checkbox
 
-The `Checkbox` field is typically a handler for (array of values) `json` model attributes:
+The `Checkbox` field is typically a handler for `json` model attributes (array of values):
 
 > Don't forget to [cast](https://laravel.com/docs/master/eloquent-mutators#attribute-casting) you model attribute as a `json` or `array`.
 
 ```php
 $field = Checkbox::make(__('Permissions'), 'permissions')
     ->options([
-        //
+        'view' => 'view',
+        'create' => 'Create',
+        'update' => 'Update',
+        'delete' => 'Delete',
     ]);
+```
+
+You may also pass a `Closure` to customize the resolution logic of the options:
+
+```php
+use App\Category;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+
+$field = Checkbox::make(__('Categories'), 'categories')
+    ->options(static function (Request $request, Model $model): array {
+        return match (true) {
+            $request->user()->isAdmin() => Category::query()->pluck('name', 'id')->all(),
+            default => $request->user()->categories()->pluck('name', 'id')->all(),
+        };
+    });
 ```
 
 ### Color
