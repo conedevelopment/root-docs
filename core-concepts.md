@@ -61,7 +61,6 @@ Product::getProxiedContract();
 
 // Proxied calls to the bound instance
 Product::proxy()->newQuery()->where(...);
-Product::proxy()->variation(...);
 
 // Dynamic usage of bound classes
 public function product()
@@ -85,8 +84,6 @@ class Addon extends Model implements Contract
 
     /**
      * Get the proxied contract.
-     *
-     * @return string
      */
     public static function getProxiedContract(): string
     {

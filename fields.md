@@ -33,19 +33,6 @@ public function fields(Request $request): array
 }
 ```
 
-Alternatively, you can use `withFields` method on an object that resolves actions. It can be useful when you just want to hook into the object for some reason.
-
-```php
-use App\Root\Fields\Text;
-use Illuminate\Http\Request;
-
-$resource->withFields(static function (Request $request): array {
-    return [
-        Text::make(__('Title'), 'title'),
-    ];
-});
-```
-
 ### Configuration
 
 ### Value Resolution
@@ -85,25 +72,18 @@ Number::make('Price')
 
 ### Value Hydration
 
-You may define custom value hydration logic on your field class. To do so, you can easily override the default `hydrate` method:
+You may define custom value hydration logic on your field. To do so, use the `hydrate` method passing a `Closure`:
 
 ```php
-namespace App\Root\Fields;
-
-use Cone\Root\Fields\Field;
-use Illuminate\Http\Request;
+use Cone\Root\Fields\Number;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Number;
 
-class CustomField extends Field
-{
-    /**
-     * Hydrate the model.
-     */
-    public function hydrate(Request $request, Model $model, mixed $value): void
-    {
-        $model->setAttribute($this->name, $value);
-    }
-}
+Number::make('Price')
+    ->hydrate(static function (Request $request, Model $model, mixed $value): void {
+        $model->setAttribute('price', $value);
+    });
 ```
 
 ## Authorization
@@ -113,37 +93,10 @@ You may allow/disallow interaction with fields. To do so, you can call the `auth
 ```php
 use Illuminate\Http\Request;
 
-$field->authorize(static function (Request $request): bool {
-    return $request->user()->can('create', Post::class);
+$field->authorize(static function (Request $request, Model $model): bool {
+    return $request->user()->isAdmin();
 });
 ```
-
-Also, when authorizing fields, pivot fields or actions, you may have access to the models of the context:
-
-```php
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
-
-// Action or top level field
-$field->authorize(static function (Request $request, ?Model $model = null): bool {
-    if (is_null($model)) {
-        return $request->user()->can('create', Post::class);
-    }
-
-    return $request->user()->can('view', $model);
-});
-
-// Pivot field
-$field->authorize(static function (Request $request, ?Model $model = null, ?Model $related = null): bool {
-    if (is_null($model) || is_null($related)) {
-        return $request->user()->can('create', Tag::class);
-    }
-
-    return $request->user()->can('attachTag', $model, $related);
-});
-```
-
-> The `$model` and the `$related` parameters can be null, since they are only passed to the callback when they are available in the current authorization context.
 
 ### Visibility
 
@@ -191,7 +144,26 @@ $field->searchable(false);
 
 ### Boolean
 
+The `Boolean` field is typically a handler for `boolean` model attributes:
+
+> Don't forget to [cast](https://laravel.com/docs/master/eloquent-mutators#attribute-casting) you model attribute as a `boolean`.
+
+```php
+$field = Boolean::make(__('Enabled'), 'enabled');
+```
+
 ### Checkbox
+
+The `Checkbox` field is typically a handler for (array of values) `json` model attributes:
+
+> Don't forget to [cast](https://laravel.com/docs/master/eloquent-mutators#attribute-casting) you model attribute as a `json` or `array`.
+
+```php
+$field = Checkbox::make(__('Permissions'), 'permissions')
+    ->options([
+        //
+    ]);
+```
 
 ### Color
 

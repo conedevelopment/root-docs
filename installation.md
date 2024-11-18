@@ -12,7 +12,7 @@ Requirements:
 
 - PHP `8.2+`
 - PHP `GD` and `EXIF` extensions
-- Laravel `^10.0`
+- Laravel `^11.0`
 
 ## Installation
 
