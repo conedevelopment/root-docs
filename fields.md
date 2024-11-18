@@ -229,6 +229,40 @@ $field->max(now()->addDays(7));
 
 ### Editor
 
+The `Editor` field is typically a handler for `text` model attributes (HTML). The `Editor` field is a [Tiptap](https://tiptap.dev/product/editor) editor combined with [alpine](https://alpinejs.dev/):
+
+```php
+$field = Editor::make(__('Content'), 'content');
+```
+
+The `root.php` config file contains the default configuration for each editor instance. You may edit the config file or you can also customize the configuration per instance:
+
+```php
+$field->withConfig(static function (array $config): array {
+    return array_merge($config, ['autofocus' => true]);
+});
+```
+
+It is also possible using the [Media Library](#media) with the `Editor` field to insert existing media files or upload new ones:
+
+```php
+$field->withMedia();
+
+// or you may customize the media field
+$field->withMedia(static function (Media $media): void {
+    $media->withRelatableQuery(static function (Request $request, Builder $query): Builder {
+        return $query->where('user_id', $request->user()->getKey());
+    });
+});
+```
+
+You can also apply modifiers on a `Editor` field:
+
+```php
+// Sets the editor height
+$field->height('300px');
+```
+
 ### File
 
 ### ID
