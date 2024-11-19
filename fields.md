@@ -140,7 +140,9 @@ $field->searchable();
 $field->searchable(false);
 ```
 
-## Available Fields
+### Translatable Fields
+
+## Generic Fields
 
 ### Boolean
 
@@ -469,8 +471,6 @@ By default the `Slug` field is generating slug only when creating the model. If 
 $field->always();
 ```
 
-### Tag
-
 ### Text
 
 The `Text` field is typically a handler for `string` model attributes:
@@ -512,11 +512,17 @@ $field->cols(100);
 
 ### URL
 
-### Relation Fields
+The `URL` field is typically a handler for `url` model attributes:
+
+```php
+$field = URL::make(__('GitHub Profile'), 'gh_profile');
+```
+
+## Relation Fields
 
 Relation fields are representing Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
 
-#### BelongsTo
+### BelongsTo
 
 The `BelongsTo` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\BelongsTo` relation:
 
@@ -526,24 +532,34 @@ $field = BelongsTo::make(__('Author'), 'author');
 
 > Root assumes that there is an already defined `author` relation on the Resource Model.
 
-#### BelongsToMany
+### BelongsToMany
 
-#### HasMany
+The `BelongsToMany` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\BelongsToMany` relation:
 
-#### HasOne
+### HasMany
 
-#### MorphMany
+The `HasMany` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\HasMany` relation:
 
-#### MorphOne
+### HasOne
 
-#### MorphToMany
+The `HasOne` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\HasOne` relation:
 
-#### File
+### MorphMany
 
-The `File` field is typically a handler for `json` model attributes (array of values):
+The `MorphMany` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\MorphMany` relation:
 
-#### Media
+### MorphOne
 
-#### Meta
+The `MorphOne` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\MorphOne` relation:
 
-### Computed Fields
+### MorphToMany
+
+The `MorphToMany` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\MorphToMany` relation:
+
+### File
+
+### Media
+
+### Meta
+
+## Computed Fields
