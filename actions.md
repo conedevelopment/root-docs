@@ -28,22 +28,9 @@ use Illuminate\Http\Request;
 public function actions(Request $request): array
 {
     return [
-        new SendPasswordResetNotification(),
+        new SendPasswordResetNotification,
     ];
 }
-```
-
-Alternatively, you can use `withActions` method on an object that resolves actions. It can be useful when you just want to hook into the object for some reason.
-
-```php
-use App\Root\Actions\SendPasswordResetNotification;
-use Illuminate\Http\Request;
-
-$resource->withActions(static function (Request $request): array {
-    return [
-        new SendPasswordResetNotification(),
-    ];
-});
 ```
 
 ## Configuration

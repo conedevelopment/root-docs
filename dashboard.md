@@ -24,7 +24,7 @@ class RootServiceProvider extends RootApplicationServiceProvider
     protected function widgets(): array
     {
         return [
-            PostCount::make(),
+            new PostCount,
         ];
     }
 }

@@ -33,20 +33,6 @@ public function filters(Request $request): array
 }
 ```
 
-Alternatively, you can use `withFilters` method on an object that resolves filters. It can be useful when you just want to hook into the object for some reason.
-
-```php
-use App\Root\Filters\Category;
-use Cone\Root\Support\Collections\Filters;
-use Illuminate\Http\Request;
-
-$resource->withFilters(static function (Request $request): array {
-    return [
-        Category::make(),
-    ];
-});
-```
-
 ## Configuration
 
 ### Options
@@ -87,24 +73,6 @@ Also, you may configure a select filter with multiple selectable choices. To do 
 
 ```php
 Category::make()->multiple();
-```
-
-### Functional Filters
-
-Also, in some cases you may interact with the Query Builder in a filter, but you don't want to render any component for it on the front-end. In that case, you may use functional components. For functional components the `$component` property is set to `null`:
-
-```php
-use Cone\Root\Filters\Filter;
-
-class FunctionalFilter extends Filter
-{
-    /**
-     * The Vue component.
-     *
-     * @var string|null
-     */
-    protected ?string $component = null;
-}
 ```
 
 ### Authorization

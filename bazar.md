@@ -69,7 +69,7 @@ Also, you may add your custom driver easily that implements the required logic o
 Registering gateways works almost the same as registering shipping methods. All custom drivers should extend the `Bazar\Gateway\Driver` class.
 
 ```php
-use Bazar\Gateway\Driver;
+use Cone\Bazar\Gateway\Driver;
 
 class CreditCardDriver extends Driver
 {
@@ -80,7 +80,7 @@ class CreditCardDriver extends Driver
 Now, let's register the driver using the `Bazar\Support\Facades\Gateway` facade:
 
 ```php
-use Bazar\Support\Facades\Gateway;
+use Cone\Bazar\Support\Facades\Gateway;
 
 Gateway::extend('credit-card', static function ($app): CreditCardDriver {
     return new CreditCardDriver(
@@ -102,7 +102,7 @@ The class that implements the interface must implement the `shipping` method, wh
 > By default, the `Bazar\Models\Order` and the `Bazar\Models\Cart` models are implementing the contract.
 
 ```php
-use Bazar\Models\Shipping;
+use Cone\Bazar\Models\Shipping;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 public function shipping(): MorphOne
@@ -122,8 +122,8 @@ Registering shipping methods works almost the same as registering gateways metho
 Let's create a simple driver as an example:
 
 ```php
-use Bazar\Contracts\Shippable;
-use Bazar\Shipping\Driver;
+use Cone\Bazar\Contracts\Shippable;
+use Cone\Bazar\Shipping\Driver;
 
 class FedexDriver extends Driver
 {
@@ -137,7 +137,7 @@ class FedexDriver extends Driver
 Now, let's register the driver using the `Bazar\Support\Facades\Shipping` facade:
 
 ```php
-use Bazar\Support\Facades\Shipping;
+use Cone\Bazar\Support\Facades\Shipping;
 
 Shipping::extend('fedex', static function ($app): FedexDriver {
     return new FedexDriver(
@@ -174,14 +174,12 @@ Cart::removeItem($item->id);
 
 ### Taxes
 
-> Before moving on, you may check the [tax documentation](/docs/tax) about managing taxes.
-
 The `Cart` model uses the `Itemable` trait, which allows the model to interact with its `Taxable` models. Taxes are stored on the `Item` and `Shipping` models.
 
 There are several methods to retrieve the aggregated tax for the model:
 
 ```php
-use Bazar\Support\Facades\Cart;
+use Cone\Bazar\Support\Facades\Cart;
 
 // Aggregate the calculated taxes
 $tax = Cart::getModel()->getTax();
@@ -195,12 +193,10 @@ $tax = Cart::getModel()->calculateTax(false);
 
 ### Discounts
 
-> Before moving on, you may check the [discount documentation](/docs/discount) about managing discounts.
-
-Unlike TAXes, discounts are stored directly on the model as an aggregated value.
+Unlike Taxes, discounts are stored directly on the model as an aggregated value.
 
 ```php
-use Bazar\Support\Facades\Cart;
+use Cone\Bazar\Support\Facades\Cart;
 
 // Get the discount attribute
 $tax = Cart::getModel()->getDiscount();
@@ -214,10 +210,8 @@ $tax = Cart::getModel()->calculateDiscount(false);
 
 ### Shipping
 
-> Before moving on, you may check the [shipping documentation](/docs/shipping) about managing shipping methods.
-
 ```php
-use Bazar\Support\Facades\Cart;
+use Cone\Bazar\Support\Facades\Cart;
 
 // Get the calculated shipping cost
 Cart::getModel()->shipping->getCost();
@@ -238,7 +232,7 @@ However, this behavior can be controlled by the lock/unlock mechanism. When the 
 > Note, you may retrieve the `Cart` model using the `Cart` facade for this feature.
 
 ```php
-use Bazar\Models\Cart;
+use Cone\Bazar\Models\Cart;
 
 $cart = Cart::first();
 
@@ -264,7 +258,7 @@ This can be extremely useful in the checkout process. Locking the cart can make 
 To keep the database clean, carts without owners **expire in 3 days**. To retrieve the expired carts, you may use the `expired()` query scope on the `Cart` model:
 
 ```php
-use Bazar\Models\Cart;
+use Cone\Bazar\Models\Cart;
 
 $expired = Cart::expired()->get();
 ```
@@ -309,8 +303,8 @@ Like shipping and payment gateway, Bazar manages multiple cart drivers as well. 
 Registering cart drivers works almost the same as registering shipping methods or payment gateways. All custom drivers should extend the `Bazar\Cart\Driver` class, which holds one abstract method: `resolve()`.
 
 ```php
-use Bazar\Cart\Driver;
-use Bazar\Models\Cart;
+use Cone\Bazar\Cart\Driver;
+use Cone\Bazar\Models\Cart;
 
 class TokenDriver extends Driver
 {
@@ -333,7 +327,7 @@ class TokenDriver extends Driver
 Now, let's register the driver using the `Bazar\Support\Facades\Cart` facade:
 
 ```php
-use Bazar\Support\Facades\Cart;
+use Cone\Bazar\Support\Facades\Cart;
 
 Cart::extend('custom', function ($app): CustomDriver {
     return new CustomDriver(
@@ -353,7 +347,7 @@ Taxes are stored on the `Item` and the `Shipping` models. Both implement the `Ta
 You may register taxes using the `Tax` facade. You can pass a number, a `Closure`, or a class (that implements the `Bazar\Contracts\Tax` interface) along with the name of the tax.
 
 ```php
-use Bazar\Support\Facades\Tax;
+use Cone\Bazar\Support\Facades\Tax;
 
 // Fix tax
 Tax::register('fix-20', 20);
@@ -361,9 +355,9 @@ Tax::register('fix-20', 20);
 
 ```php
 // Custom closure tax
-use Bazar\Models\Shipping;
-use Bazar\Contracts\LineItem;
-use Bazar\Support\Facades\Tax;
+use Cone\Bazar\Models\Shipping;
+use Cone\Bazar\Contracts\LineItem;
+use Cone\Bazar\Support\Facades\Tax;
 
 Tax::register('custom-percent', function (LineItem $model) {
     return $model->getPrice() * ($model instanceof Shipping ? 0.3 : 0.27);
@@ -372,10 +366,10 @@ Tax::register('custom-percent', function (LineItem $model) {
 
 ```php
 // Class tax
-use Bazar\Contracts\Tax as Contract;
-use Bazar\Contracts\LineItem;
-use Bazar\Models\Shipping;
-use Bazar\Support\Facades\Tax;
+use Cone\Bazar\Contracts\Tax as Contract;
+use Cone\Bazar\Contracts\LineItem;
+use Cone\Bazar\Models\Shipping;
+use Cone\Bazar\Support\Facades\Tax;
 
 class CustomTax implements Contract
 {
@@ -395,7 +389,7 @@ Tax::register('complex-tax', new CustomTax);
 You may remove registered taxes using the `Tax` facade.
 
 ```php
-use Bazar\Support\Facades\Tax;
+use Cone\Bazar\Support\Facades\Tax;
 
 Tax::remove('complex-tax');
 ```
@@ -405,7 +399,7 @@ Tax::remove('complex-tax');
 You may disable tax calculation globally in some scenarios. To do so, call the `disable` method on the `Tax` facade.
 
 ```php
-use Bazar\Support\Facades\Tax;
+use Cone\Bazar\Support\Facades\Tax;
 
 Tax::disable();
 ```
@@ -423,7 +417,7 @@ Discounts are stored on the `Item` and the `Shipping` models. Both implement the
 You may register discounts using the `Discount` facade. You can pass a number, a `Closure`, or a class (that implements the `Bazar\Contracts\Discount` interface) along with the name of the discount.
 
 ```php
-use Bazar\Support\Facades\Discount;
+use Cone\Bazar\Support\Facades\Discount;
 
 // Fix discount
 Discount::register('fix-20', 20);
@@ -431,7 +425,7 @@ Discount::register('fix-20', 20);
 
 ```php
 // Custom closure discount
-use Bazar\Support\Facades\Discount;
+use Cone\Bazar\Support\Facades\Discount;
 
 Discount::register('custom-percent', function (Discountable $model) {
     return $model->getTotal() * 0.3;
@@ -440,9 +434,9 @@ Discount::register('custom-percent', function (Discountable $model) {
 
 ```php
 // Class discount
-use Bazar\Contracts\Discount as Contract;
-use Bazar\Contracts\Discountable;
-use Bazar\Support\Facades\Discount;
+use Cone\Bazar\Contracts\Discount as Contract;
+use Cone\Bazar\Contracts\Discountable;
+use Cone\Bazar\Support\Facades\Discount;
 
 class CustomDiscount implements Contract
 {
@@ -462,7 +456,7 @@ Discount::register('complex-discount', new CustomDiscount);
 You may remove registered discounts using the `Discount` facade.
 
 ```php
-use Bazar\Support\Facades\Discount;
+use Cone\Bazar\Support\Facades\Discount;
 
 Discount::remove('complex-discount');
 ```
@@ -472,7 +466,7 @@ Discount::remove('complex-discount');
 You may disable discount calculation globally in some scenarios. To do so, call the `disable` method on the `Discount` facade.
 
 ```php
-use Bazar\Support\Facades\Discount;
+use Cone\Bazar\Support\Facades\Discount;
 
 Discount::disable();
 ```

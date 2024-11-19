@@ -33,7 +33,7 @@ public function fields(Request $request): array
 }
 ```
 
-### Configuration
+## Configuration
 
 ### Value Resolution
 
@@ -86,7 +86,7 @@ Number::make('Price')
     });
 ```
 
-## Authorization
+### Authorization
 
 You may allow/disallow interaction with fields. To do so, you can call the `authorize` method on the field instance:
 
@@ -526,6 +526,18 @@ Relation fields are representing Eloquent relation definitions on the resource m
 
 #### Searchable & Sortable Columns
 
+When using the `searchable` and `sortable` methods on the relation fields the target columns should be defined.
+
+```php
+$field->searchable(columns: [
+    'id', 'name',
+]);
+```
+
+```php
+$field->sortable(column: 'name');
+```
+
 #### Customizing the Query
 
 You may customize the relatable model's query. This is possible defining global scopes per field type or locally on the field definition.
@@ -582,7 +594,7 @@ $field->aggregate('count', 'id');
 $field->aggregate('sum', 'tax');
 ```
 
-> The available aggregate functions: `count`, `min`, `max`, `sum`, `avg`.
+> The available aggregate functions: `count`, `min`, `max`, `sum` and `avg`.
 
 #### Grouping
 
@@ -602,6 +614,14 @@ $field->groupOptionsBy(static function (Model $model): string {
 
 #### Subresources
 
+When relation fields need more robust management you might convert it as a subresource. That means, instead of rendering a `<select>` on the resource form, the relation field gets its own CRUD interfaces as it would be a resource.
+
+```php
+$field->asSubResource();
+```
+
+Subresources appear on the parent resource models's show route.
+
 ### BelongsTo
 
 The `BelongsTo` field is typically a handler for an existing `Illuminate\Database\Eloquent\Relations\BelongsTo` relation:
@@ -615,6 +635,25 @@ $field = BelongsTo::make(__('Author'), 'author');
 ### BelongsToMany
 
 The `BelongsToMany` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\BelongsToMany` relation:
+
+```php
+$field = BelongsToMany::make(__('Teams'), 'teams');
+```
+
+When using as subresource, you may define editable pivot fields:
+
+> Only existing models can be attached, creating relatable models from the subresource is not supported.
+
+```php
+$field->withPivotFields(static function (Request $request): array {
+    return [
+        Select::make('Role', 'role')->options([
+            'admin' => 'Admin',
+            'member' => 'Member',
+        ]),
+    ];
+});
+```
 
 ### HasMany
 

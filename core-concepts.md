@@ -39,7 +39,7 @@ After you created your customizable model, you can swap the container binding fo
 use App\Models\Product;
 use Cone\Bazar\Contracts\Models\Product as Contract;
 
-public function register()
+public function register(): void
 {
     $this->app->bind(Contract::class, Product::class);
 }
@@ -53,6 +53,7 @@ Proxies are representing the classes that are currently bound to the container. 
 
 ```php
 use Cone\Bazar\Models\Product;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 // Available proxy methods
 Product::proxy();
@@ -63,7 +64,7 @@ Product::getProxiedContract();
 Product::proxy()->newQuery()->where(...);
 
 // Dynamic usage of bound classes
-public function product()
+public function product(): BelongsTo
 {
     $this->belongsTo(Product::getProxiedClass());
 }

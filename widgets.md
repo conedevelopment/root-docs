@@ -33,22 +33,6 @@ public function widgets(Request $request): array
 }
 ```
 
-Alternatively, you can use `withWidgets` method on an object that resolves widgets. It can be useful when you just want to hook into the object for some reason.
-
-```php
-use App\Root\Widgets\PostCount;
-use Cone\Root\Support\Collections\Widgets;
-use Illuminate\Http\Request;
-
-$resource->withWidgets(static function (Request $request, Widgets $widgets): Widgets {
-    return $widgets->merge([
-        PostCount::make(),
-    ]);
-});
-```
-
-> You can also pass an `array` instead of a `Closure`. In that case the array will be merged into the collection.
-
 ## Configuration
 
 ### Authorization

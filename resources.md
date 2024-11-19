@@ -37,8 +37,8 @@ class RootServiceProvider extends RootApplicationServiceProvider
     protected function resources(): array
     {
         return [
-            new UserResource(),
-            new PostResource(),
+            new UserResource,
+            new PostResource,
         ];
     }
 }
