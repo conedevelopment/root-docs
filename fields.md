@@ -227,6 +227,19 @@ $field->max('2024-01-01');
 $field->max(now()->addDays(7));
 ```
 
+### Dropdown
+
+The `Dropdown` field is turbo-charded version of the [`Select`](#select) field. You may checkout its documentation.
+
+```php
+$field  = Dropdown::make(__('Tags'), 'tags')
+    ->options([
+        'bug' => 'Bug',
+        'info' => 'Info',
+        'question' => 'Question',
+    ]);
+```
+
 ### Editor
 
 The `Editor` field is typically a handler for `text` model attributes (HTML). The `Editor` field is a [Tiptap](https://tiptap.dev/product/editor) editor combined with [alpine](https://alpinejs.dev/):
@@ -263,19 +276,115 @@ You can also apply modifiers on a `Editor` field:
 $field->height('300px');
 ```
 
-### File
+### Email
+
+The `Email` field is typically a handler for `email` model attributes:
+
+```php
+$field = Email::make(__('Billing Email'), 'billing_email');
+```
+
+> You may use the `email` validation rule for this field. By default no rules attached.
+
+### Fieldset
+
+The `Fieldset` field a handler for grouped sub-fields. Also, it renders its fields into a `<fieldset>` HTML element:
+
+```php
+$group = Fieldset::make(__('Billing Fields'), 'billing')
+    ->withFields(static function (): array {
+        return [
+            Text::make(__('Name'), 'billing_name'),
+            Email::make(__('Email', 'billing_email')),
+        ];
+    });
+```
+
+### Hidden
+
+The `Hidden` field is eqvivalent to a simple `Field` instance, however it automatically gets a `type="hidden"` HTML attribute, that makes it uneditable:
+
+```php
+$field = Hidden::make(__('Token'), 'token')
+    ->default(fn (): string => Str::uuid());
+```
 
 ### ID
 
-### Media
+The `ID` field is typically a handler for the model's primary key. It can be an incremental numeric ID or a UUID as well.
+
+```php
+$field = ID::make();
+```
 
 ### Number
 
+The `Number` field is typically a handler for `numeric` model attributes:
+
+```php
+$field = Number::make(__('Age'), 'age');
+```
+
+You can also apply modifiers on a text field:
+
+```php
+// Adds the "size" HTML input attribute
+$field->size(40);
+
+// Adds the "min" HTML input attribute
+$field->min(40);
+
+// Adds the "max" HTML input attribute
+$field->max(40);
+
+// Adds the "step" HTML input attribute
+$field->step(1);
+```
+
 ### Radio
+
+The `Radio` field is similar to [`Checkbox`](#checkbox), however only single values are allowed, unlike in the case of `Checkbox`, where array of values are being stored:
+
+```php
+$field = Radio::make(__('Role'), 'role')
+    ->options([
+        'admin' => 'Admin',
+        'editor' => 'Editor',
+        'member' => 'Member',
+    ]);
+```
+
+You may also pass a `Closure` to customize the resolution logic of the options:
+
+```php
+use App\Category;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+
+$field = Radio::make(__('Category'), 'category')
+    ->options(static function (Request $request, Model $model): array {
+        return match (true) {
+            $request->user()->isAdmin() => Category::query()->pluck('name', 'id')->all(),
+            default => $request->user()->categories()->pluck('name', 'id')->all(),
+        };
+    });
+```
 
 ### Range
 
+The `Range` field is typically a handler for `numeric` model attributes:
+
+```php
+$field = Range::make(__('Points'), 'points')
+    ->min(0)
+    ->max(10);
+```
+
+### Repeater
+
 ### Select
+
+### Slug
 
 ### Tag
 
@@ -287,7 +396,7 @@ The `Text` field is typically a handler for `string` model attributes:
 $field = Text::make(__('Title'), 'title');
 ```
 
-You can also apply modifiers on a text field:
+You can also apply modifiers on `Text` field:
 
 ```php
 // Adds the "size" HTML input attribute
@@ -318,6 +427,8 @@ $field->rows(20);
 $field->cols(100);
 ```
 
+### URL
+
 ### Relation Fields
 
 Relation fields are representing Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
@@ -343,3 +454,13 @@ $field = BelongsTo::make(__('Author'), 'author');
 #### MorphOne
 
 #### MorphToMany
+
+#### File
+
+The `File` field is typically a handler for `json` model attributes (array of values):
+
+#### Media
+
+#### Meta
+
+### Computed Fields
