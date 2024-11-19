@@ -283,7 +283,7 @@ $group = Fieldset::make(__('Billing Fields'), 'billing')
     ->withFields(static function (): array {
         return [
             Text::make(__('Name'), 'billing_name'),
-            Email::make(__('Email', 'billing_email')),
+            Email::make(__('Email'), 'billing_email'),
         ];
     });
 ```
@@ -434,7 +434,7 @@ $field = Slug::make(__('Slug'), 'slug')
     ->from(['name']);
 ```
 
-You may also want to have unique slugs, which means when a slug is already exists in the databse table, the new slug will get an incremented numeric suffix to avoid conflicts:
+You may also want to have unique slugs, which means when a slug is already exists in the database table, the new slug will get an incremented numeric suffix to avoid conflicts:
 
 ```php
 $field->unique();
@@ -524,7 +524,7 @@ Relation fields are representing Eloquent relation definitions on the resource m
 
 ### Configuration
 
-### Searchable & Sortable Columns
+#### Searchable & Sortable Columns
 
 #### Customizing the Query
 
@@ -553,6 +553,20 @@ $field->withRelatableQuery(function (Request $request, Builder $query, Model $mo
 ```
 
 #### Formatting
+
+You may format the relatable models. By default the ID is displayed, but you can customize the format easily:
+
+```php
+$field->display('name');
+```
+
+Alternatively, you may pass a `Closure` to have an apply formatting logic:
+
+```php
+$field->display(static function (Model $model): string {
+    return strtoupper($model->name);
+});
+```
 
 #### Aggregates
 
