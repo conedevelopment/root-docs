@@ -168,21 +168,7 @@ $field = Checkbox::make(__('Permissions'), 'permissions')
     ]);
 ```
 
-You may also pass a `Closure` to customize the resolution logic of the options:
-
-```php
-use App\Category;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-
-$field = Checkbox::make(__('Categories'), 'categories')
-    ->options(static function (Request $request, Model $model): array {
-        return match (true) {
-            $request->user()->isAdmin() => Category::query()->pluck('name', 'id')->all(),
-            default => $request->user()->categories()->pluck('name', 'id')->all(),
-        };
-    });
-```
+You may also pass a `Closure` to customize the resolution logic of the options, see the [`Select`](#select) field.
 
 ### Color
 
@@ -354,21 +340,7 @@ $field = Radio::make(__('Role'), 'role')
     ]);
 ```
 
-You may also pass a `Closure` to customize the resolution logic of the options:
-
-```php
-use App\Category;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-
-$field = Radio::make(__('Category'), 'category')
-    ->options(static function (Request $request, Model $model): array {
-        return match (true) {
-            $request->user()->isAdmin() => Category::query()->pluck('name', 'id')->all(),
-            default => $request->user()->categories()->pluck('name', 'id')->all(),
-        };
-    });
-```
+You may also pass a `Closure` to customize the resolution logic of the options, see the [`Select`](#select) field.
 
 ### Range
 
@@ -382,9 +354,120 @@ $field = Range::make(__('Points'), 'points')
 
 ### Repeater
 
+The `Repeater` field similar to the [`Fieldset`](#fieldset) field, however the sub-fields are repeatable:
+
+```php
+$field = Repeater::make(__('Books'), 'books')
+    ->withFields(static function (): array {
+        return [
+            Text::make(__('Author'), 'author'),
+            Text::make('ISBN'),
+        ];
+    });
+```
+
+You may also set a maximum number of repeatable elements using the `max` method:
+
+```php
+$field->max(4);
+```
+
 ### Select
 
+The `Select` field is similar to the [`Checkbox`](#checkbox), [`Dropdown`](#dropdown) and [`Radio`](#radio) fields, in fact the `Select` field is their parent class:
+
+```php
+$field = Select::make(__('Tags'), 'tags')
+    ->options([
+        'bug' => 'Bug',
+        'info' => 'Info',
+        'question' => 'Question',
+    ]);
+```
+
+You may make the field to `nullable` which means an extra empty option is available in the options:
+
+```php
+$field->nullable();
+
+// or
+
+$field->nullable(false);
+```
+
+You can also apply modifiers on `Select` field:
+
+```php
+// Adds the "size" HTML input attribute
+$field->size(10);
+
+// Adds the "multiple" HTML input attribute
+$field->multiple();
+// or
+$field->multiple(false);
+```
+
+You may also pass a `Closure` to customize the resolution logic of the options:
+
+```php
+use App\Category;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+
+$field = Select::make(__('Category'), 'category')
+    ->options(static function (Request $request, Model $model): array {
+        return match (true) {
+            $request->user()->isAdmin() => Category::query()->pluck('name', 'id')->all(),
+            default => $request->user()->categories()->pluck('name', 'id')->all(),
+        };
+    });
+```
+
 ### Slug
+
+The `Slug` field  is typically a handler for auto-generating URL friendly values of specified model attributes:
+
+```php
+$field = Slug::make(__('Slug'), 'slug')
+    ->from(['name']);
+```
+
+You may also want to have unique slugs, which means when a slug is already exists in the databse table, the new slug will get an incremented numeric suffix to avoid conflicts:
+
+```php
+$field->unique();
+
+// unique-slug
+// unique-slug-1
+// unique-slug-2
+// etc...
+```
+
+You may also want to customize the slug separator:
+
+```php
+$field->separator('_');
+```
+
+> The default slug separator is `-`.
+
+You may also want to completely customize the slug generation logic:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+$field->generateUsing(static function (Request $request, Model $model, string $value): string {
+    return sprintf('%s-%s', $value, Str::random(5));
+});
+```
+
+By default the `Slug` field is generating slug only when creating the model. If you want to run the generation logic when the model is being updated as well, you may call the `always` method:
+
+```php
+$field->always();
+```
 
 ### Tag
 
