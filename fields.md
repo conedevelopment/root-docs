@@ -522,15 +522,53 @@ $field = URL::make(__('GitHub Profile'), 'gh_profile');
 
 Relation fields are representing Eloquent relation definitions on the resource models. Relation fields are highly customizable and provide a nice and detailed API.
 
+### Configuration
+
+### Searchable & Sortable Columns
+
+#### Customizing the Query
+
+You may customize the relatable model's query. This is possible defining global scopes per field type or locally on the field definition.
+
+You may apply global customization using the `scopeQuery` static method:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+
+Media::scopeQuery(function (Request $request, Builder $query, Model $model): Builder {
+    return $query->where('user_id', $request->user()->getKey());
+});
+```
+
+> This will apply the query resolution logic to all `Media` fields.
+
+You may apply local customization using the `withRelatableQuery` method:
+
+```php
+$field->withRelatableQuery(function (Request $request, Builder $query, Model $model): Builder {
+    return $query->where('user_id', $request->user()->getKey());
+})
+```
+
+#### Formatting
+
+#### Aggregates
+
+#### Grouping
+
+#### Subresources
+
 ### BelongsTo
 
-The `BelongsTo` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\BelongsTo` relation:
+The `BelongsTo` field is typically a handler for an existing `Illuminate\Database\Eloquent\Relations\BelongsTo` relation:
 
 ```php
 $field = BelongsTo::make(__('Author'), 'author');
 ```
 
-> Root assumes that there is an already defined `author` relation on the Resource Model.
+> The `BelongsTo` field cannot be a subresource.
 
 ### BelongsToMany
 
