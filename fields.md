@@ -560,7 +560,7 @@ You may format the relatable models. By default the ID is displayed, but you can
 $field->display('name');
 ```
 
-Alternatively, you may pass a `Closure` to have an apply formatting logic:
+Alternatively, you may pass a `Closure`:
 
 ```php
 $field->display(static function (Model $model): string {
@@ -570,7 +570,35 @@ $field->display(static function (Model $model): string {
 
 #### Aggregates
 
+On `index` views, often it makes more sense to display an aggregated value of the relation. For example, when a model has a `BelongsToMany` relation with a bunch of attached record, it's not really optimal to show all the related model's formatted value in the table row, but the number of the attached values.
+
+You may customize this aggregation logic using the `aggregate` function. The first parameter is the aggregate function, while the second one is the aggregated column.
+
+```php
+$field->aggregate('count', 'id');
+
+// or
+
+$field->aggregate('sum', 'tax');
+```
+
+> The available aggregate functions: `count`, `min`, `max`, `sum`, `avg`.
+
 #### Grouping
+
+You may also group options for a better UI. This feature wraps the `<option>` elements into an `<optgroup>`.
+
+```php
+$field->groupOptionsBy('category_id');
+```
+
+Alternatively, you may pass a `Closure`:
+
+```php
+$field->groupOptionsBy(static function (Model $model): string {
+    return $model->category->name;
+});
+```
 
 #### Subresources
 
