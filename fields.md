@@ -731,16 +731,6 @@ The `HasOne` field is typically a handler for a `Illuminate\Database\Eloquent\Re
 $field = HasMany::make(__('Comments'), 'comments');
 ```
 
-When using as subresource, you may define the related model's fields:
-
-```php
-$field->withFields(static function (Request $request): array {
-    return [
-        Textarea::make('Body'),
-        Boolean::make('Approved'),
-    ];
-});
-
 ### MorphMany
 
 The `MorphMany` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\MorphMany` relation:
