@@ -622,6 +622,47 @@ $field->asSubResource();
 
 Subresources appear on the parent resource models's show route.
 
+##### Fields
+
+When using a field as subresource, you may define the related model's fields:
+
+```php
+$field->withFields(static function (Request $request): array {
+    return [
+        Textarea::make('Body'),
+        Boolean::make('Approved'),
+    ];
+});
+```
+
+##### Filters
+
+When using a field as subresource, you may define the filters for its `index` view:
+
+```php
+use App\Root\Filters\CategoryFilter;
+
+$field->withFilters(static function (Request $request): array {
+    return [
+        new CategoryFilter,
+    ];
+});
+```
+
+##### Actions
+
+When using a field as subresource, you may define the filters for its `index` view:
+
+```php
+use App\Root\Actions\SendOrderNotification;
+
+$field->withActions(static function (Request $request): array {
+    return [
+        new SendOrderNotification,
+    ];
+});
+```
+
 ### BelongsTo
 
 The `BelongsTo` field is typically a handler for an existing `Illuminate\Database\Eloquent\Relations\BelongsTo` relation:
@@ -640,7 +681,7 @@ The `BelongsToMany` field is typically a handler for a `Illuminate\Database\Eloq
 $field = BelongsToMany::make(__('Teams'), 'teams');
 ```
 
-When using as subresource, you may define editable pivot fields:
+When using as subresource, you may define editable pivot fields. Use the `withPivotFields` instead of the `withFields`:
 
 > Only existing models can be attached, creating relatable models from the subresource is not supported.
 
@@ -655,13 +696,50 @@ $field->withPivotFields(static function (Request $request): array {
 });
 ```
 
+Sometimes you may want to attach the same model multiple times (maybe with different pivot values). To do so, call the `allowDuplicateRelations` method on the field:
+
+```php
+$field->allowDuplicateRelations();
+```
+
+When duplications are allowed, the relatable model query includes the already attached models as well, otherwise they are excluded from the query.
+
 ### HasMany
 
 The `HasMany` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\HasMany` relation:
 
+```php
+$field = HasMany::make(__('Comments'), 'comments');
+```
+
+When using as subresource, you may define the related model's fields:
+
+```php
+$field->withFields(static function (Request $request): array {
+    return [
+        Textarea::make('Body'),
+        Boolean::make('Approved'),
+    ];
+});
+```
+
 ### HasOne
 
 The `HasOne` field is typically a handler for a `Illuminate\Database\Eloquent\Relations\HasOne` relation:
+
+```php
+$field = HasMany::make(__('Comments'), 'comments');
+```
+
+When using as subresource, you may define the related model's fields:
+
+```php
+$field->withFields(static function (Request $request): array {
+    return [
+        Textarea::make('Body'),
+        Boolean::make('Approved'),
+    ];
+});
 
 ### MorphMany
 
