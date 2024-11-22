@@ -20,26 +20,30 @@ php artisan root:resource CustomPostResource --model=Post
 
 ## Registering Resources
 
-You may register your resources by using the `RootServiceProvider` which is published and automatically registered when the `root:install` artisan command is called.
+Root automatically registers the resources found in the `app/Root/Resources` directory. However you may store resources somewhere else or also you may want to register a resource manually:
 
 ```php
 namespace App\Providers;
 
-use App\Root\Resources\PostResource;
-use App\Root\Resources\UserResource;
-use Cone\Root\RootApplicationServiceProvider;
+use Cone\Root\Root;
+use Illuminate\Support\ServiceProvider;
 
-class RootServiceProvider extends RootApplicationServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
     /**
-     * The resources.
+     * Bootstrap any application services.
      */
-    protected function resources(): array
+    public function boot(): void
     {
-        return [
-            new UserResource,
-            new PostResource,
-        ];
+        // Discover in custom directory
+        Root::instance()->resources->discoverIn([
+            app_path('Path/To/Resources'),
+        ]);
+
+        // Register manually
+        Root::instance()->resources->register([
+            new \App\Root\Resources\ProductResource,
+        ]);
     }
 }
 ```
